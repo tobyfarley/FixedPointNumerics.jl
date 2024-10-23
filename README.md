@@ -14,6 +14,6 @@ Basically
 Basic math operations and some higher math functionality availiable. Every equation will widen a fixed point number to the 
 largest precision of any fixed point number in the equation. For example, multiplying a number of two decimal places by one of four places
 will produce a four place number regardless of the result. A conversion to float and back to fixed point is done when calling
-higher math functions. One single parameter math functions (ie. sin, cos and tan) the number of decimal places is preserved. 
+higher math functions. With single parameter math functions (ie. sin, cos and tan) the number of decimal places is preserved. 
 
 Version 0.0.1
