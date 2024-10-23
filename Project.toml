@@ -1,0 +1,4 @@
+name = "FixedPointNumerics"
+uuid = "667e4c0e-a733-4321-83c7-c10aa58aff6a"
+authors = ["Toby Farley <toby.farley@d51schools.org>"]
+version = "0.0.1"
