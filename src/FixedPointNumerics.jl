@@ -124,12 +124,12 @@ end
 
 function floatdiv(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
-    r = ((x.value % y.value) * 10^(x.precision + 1)) ÷ y.value
+    r = ((x.value % y.value) * (10^(x.precision + 1))) ÷ y.value
     if x.precision > 1
-        if r % (10^(x.precision - 1)) >= 5
-            return FixedPoint((r ÷ (10^(x.precision - 1)) + 1) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
+        if r % 10 >= 5
+            return FixedPoint(((r ÷ 10) + 1) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
         else
-            return FixedPoint((r ÷ 10^(x.precision - 1)) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
+            return FixedPoint((r ÷ 10) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
         end
     else
         return FixedPoint(x.value ÷ y.value,x.precision)
