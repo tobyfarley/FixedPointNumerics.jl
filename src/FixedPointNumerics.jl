@@ -117,8 +117,6 @@ end
 function mul(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
     sc = 10^x.precision
-    println(sc)
-    println((x.value * y.value) ÷ ((x.value > sc || y.value > sc ? sc : 1)))
     return FixedPoint((x.value * y.value) ÷ ((x.value > sc || y.value > sc ? sc : 1)), x.precision)
 end
 
