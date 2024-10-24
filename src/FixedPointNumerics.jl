@@ -5,7 +5,7 @@ __precompile__(false)
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
-import Base.sin, Base.cos, Base.tan, Base.sind, Base.cosd, Base.tand
+import Base.sin, Base.cos, Base.tan, Base.sind, Base.cosd, Base.tand,  Base.sinh,  Base.cosc,  Base.tanc
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse
 
 export FixedPoint, scale
@@ -294,6 +294,10 @@ parse(::Type{FixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(Fixe
 (cosd)(z::FixedPoint) = (FixedPoint(cosd(Float64(z.value) / (10^z.precision)), z.precision))
 (sind)(z::FixedPoint) = (FixedPoint(sind(Float64(z.value) / (10^z.precision)), z.precision))
 (tand)(z::FixedPoint) = (FixedPoint(tand(Float64(z.value) / (10^z.precision)), z.precision))
+(cosc)(z::FixedPoint) = (FixedPoint(cosc(Float64(z.value) / (10^z.precision)), z.precision))
+(sinc)(z::FixedPoint) = (FixedPoint(sinc(Float64(z.value) / (10^z.precision)), z.precision))
+(tanc)(z::FixedPoint) = (FixedPoint(tanc(Float64(z.value) / (10^z.precision)), z.precision))
+
 
 (-)(z::FixedPoint) = (FixedPoint(-(z.value), z.precision))
 (+)(z::FixedPoint) = (FixedPoint(+(z.value), z.precision))
