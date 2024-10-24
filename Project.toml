@@ -4,5 +4,4 @@ authors = ["Toby Farley <tobyfarley@gmail.com>"]
 version = "0.0.1"
 
 [compat]
-FixedPointNumerics = "0.0.1"
 julia = ">= 1.10.0"
