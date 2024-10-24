@@ -5,7 +5,7 @@ __precompile__(false)
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
-import Base.sin, Base.cos, Base.tan, Base.sind, Base.cosd, Base.tand,  Base.sinh,  Base.cosc,  Base.tanc
+import Base.sin, Base.cos, Base.tan, Base.sind, Base.cosd, Base.tand,  Base.sinh,  Base.cosc
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse
 
 export FixedPoint, scale
