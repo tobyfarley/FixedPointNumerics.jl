@@ -139,8 +139,15 @@ function rem(z::FixedPoint, w::FixedPoint)
     return FixedPoint((x.value % y.value), x.precision)
 end
 
-function intdiv(z::FixedPoint, w::FixedPoint)::FixedPoint
+function div(z::FixedPoint, w::FixedPoint)::FixedPoint
+    println("here")
     (x, y) = scale(z, w)
+    println(x)
+    println(y)
+    println(typeof(x.value))
+    println(x.value)
+    println(typeof(y.value))
+    println(y.value)
     return FixedPoint(((x.value ÷ y.value) * 10^(x.precision)), x.precision)
 end
 
@@ -266,11 +273,11 @@ parse(::Type{FixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(Fixe
 (^)(z::AbstractFloat, w::FixedPoint) = pwr(parse(FixedPoint, string(z)), w)
 (^)(z::FixedPoint, w::AbstractFloat) = pwr(z, parse(FixedPoint, string(w)))
 
-(÷)(z::FixedPoint, w::FixedPoint) = intdiv(z, w)
-(÷)(z::Integer, w::FixedPoint) = intdiv(FixedPoint(z,0), w)
-(÷)(z::FixedPoint, w::Integer) = intdiv(z, FixedPoint(w,0))
-(÷)(z::AbstractFloat, w::FixedPoint) = intdiv(parse(FixedPoint, string(z)), w)
-(÷)(z::FixedPoint, w::AbstractFloat) = intdiv(z, parse(FixedPoint, string(w)))
+(÷)(z::FixedPoint, w::FixedPoint)::FixedPoint = div(z, w)
+(÷)(z::Integer, w::FixedPoint)::FixedPoint = div(FixedPoint(z,0), w)
+(÷)(z::FixedPoint, w::Integer)::FixedPoint = div(z, FixedPoint(w,0))
+(÷)(z::AbstractFloat, w::FixedPoint)::FixedPoint = div(parse(FixedPoint, string(z)), w)
+(÷)(z::FixedPoint, w::AbstractFloat)::FixedPoint = div(z, parse(FixedPoint, string(w)))
 
 (%)(z::FixedPoint, w::FixedPoint) = rem(z, w)
 (%)(z::Integer, w::FixedPoint) = rem(FixedPoint(z,0), w)
