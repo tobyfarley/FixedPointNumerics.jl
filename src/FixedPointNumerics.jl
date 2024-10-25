@@ -27,6 +27,31 @@ export deg2rad, rad2deg, hypot, log1p, ldexp, modf, trunc
 export ispow2, invmod
 export round, parse, sign, copysign
 
+# testing
+
+"""
+    FixedPoint(v,p)
+
+Create a mutable struct that contains an integer value(v) with integer decimal places(p)
+
+The value is always an integer. The p (precision) value determins how many decimal places are represented.
+
+In the case that v is a float type, the number is rounded to p digits and then scaled to 10^p
+
+# Examples
+```
+x = FixedPoint(4125,2)
+println(x)
+41.25
+println(x * 2)
+82.50 
+```
+All math operators are supported as well as most math functions. When calling math functions the number
+is converted to a Float64 and then back to FixedPoint type. The number of digits are preserved. When
+types with mixed precision are mixed all operands and the result are widened to the maximum precision 
+of all operands. The return type of equations and math functions are almost always goint to be a FixedPoint
+type value.
+"""
 mutable struct FixedPoint{V<:Integer,P<:Integer} <: AbstractFloat
     value::V
     precision::P
@@ -248,7 +273,21 @@ function tryparse_internal(::Type{FixedPoint}, s::String)
     end
     return n
 end
+"""
+    parse(::FixedPoint, s)
 
+This function will parse a string and attempt to create FixedPoint type from it. It will attempt to determine
+the precision from the number of digits to the right of the decimal point.
+
+# Examples
+```
+x = parse(FixedPoint, "41.25")
+println(x)
+41.25
+println(x * 2)
+82.50 
+```
+"""
 parse(::Type{FixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(FixedPoint, s)
 
 function cmp(z::FixedPoint, w::FixedPoint)::Integer
