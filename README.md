@@ -1,6 +1,6 @@
 # FixedPointNumerics
 
-This package implements fixed point numbers using integers. Documentation is limited for the moment.
+This package implements fixed point numbers using integers. Feature complete as an intial version. 
 
 Basically 
 
