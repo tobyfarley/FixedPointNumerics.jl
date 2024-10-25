@@ -41,6 +41,8 @@ fp17 = FixedPoint(2,1)
 
 @test fp4 * fp6 == 10.03
 @test 10.03 == fp4 * fp6
+@test fp4 * 10.24 == 10.03
+@test 10.24 * fp4 == 10.03
 
 @test fp2 > fp1
 @test fp1 < fp2
