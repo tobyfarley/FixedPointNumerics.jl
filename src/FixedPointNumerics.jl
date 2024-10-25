@@ -12,7 +12,8 @@ import Base.csc, Base.cscd, Base.csch, Base.cot, Base.cotd, Base.coth, Base.asec
 import Base.acsc, Base.acscd, Base.acsch, Base.acot, Base.acotd, Base.acoth, Base.asin, Base.asind, Base.asinh
 import Base.asin, Base.asind, Base.asinh, Base.acos, Base.acosd, Base.acosh, Base.atan, Base.atand, Base.atanh
 import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldexp, Base.modf, Base.trunc
-import Base.round, Base.RoundingMode, Base.parse, Base.tryparse
+import Base.ispow2, Base.invmod
+import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
 
 export FixedPoint, scale, AbstractFloat, Float64, convert
 export ==, >=, <=, >, <, +, -, *, /, ^, ÷, \, %, √, ∛, ∜
@@ -23,13 +24,15 @@ export csc, cscd, csch, cot, cotd, coth, asec, asecd, asech
 export acsc, acscd, ascsh, acot, acotd, acoth, asin, asind, asinh
 export asin, asind, asinh, acos, acosd, acosh, atan, atand, atanh
 export deg2rad, rad2deg, hypot, log1p, ldexp, modf, trunc
-export round, parse
+export ispow2, invmod
+export round, parse, sign, copysign
 
-mutable struct FixedPoint{V<:Integer,P<:Integer} <: Real
+mutable struct FixedPoint{V<:Integer,P<:Integer} <: AbstractFloat
     value::V
     precision::P
 
     function FixedPoint{V,P}(v::V, p::P) where {V<:Integer,P<:Integer}
+        println("value:",v)
         new(v, p)
     end
 
@@ -49,13 +52,43 @@ end
 function show(io::IO, z::FixedPoint)
     s = string(abs(z.value))
     if z.value == 0
-        fmt = "0.0"
+        fmt = "0." * repeat("0",z.precision)
     elseif length((s)) <= z.precision
         fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     else
         fmt = (z.value < 0 ? "-" : "") * s[1:end-z.precision] * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     end
     print(io, fmt)
+end
+
+function sign(z::FixedPoint)
+    if z.value == 0
+        return FixedPoint(0,z.precision)
+    else
+        return z.value < 0 ? FixedPoint(-1 * 10^z.precision,z.precision) : FixedPoint(1 * 10^z.precision,z.precision)
+    end
+end
+
+function copysign(z::FixedPoint, w::FixedPoint)
+    x = FixedPoint(z.value, z.precision)
+    if w.value >= 0
+        x.value = abs(x.value)
+        return x
+    else
+        x.value = -(abs(x.value))
+        return x
+    end
+end
+
+function copysign(z::FixedPoint, w::Real)
+    x = FixedPoint(z.value, z.precision)
+    if w >= 0
+        x.value = abs(x.value)
+        return x
+    else
+        x.value = -(abs(x.value))
+        return x
+    end
 end
 
 function scale(z::FixedPoint, w::FixedPoint)
@@ -73,7 +106,7 @@ function scale(z::FixedPoint, w::FixedPoint)
         return (x, w)
     end
 end
-
+   
 function scale!(z::FixedPoint, w::FixedPoint)
     if z.precision > w.precision
         w.value = Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))
@@ -165,6 +198,11 @@ function invdiv(z::FixedPoint, w::FixedPoint)
     return floatdiv(w, z)
 end
 
+function invmod(x::FixedPoint, y::FixedPoint)
+    (x, y) = scale(z, w)
+    return FixedPoint((y.value % x.value), x.precision)
+end
+
 function round(z::FixedPoint, r::RoundingMode=RoundNearest;
     digits::Union{Nothing,Integer}=nothing, sigdigits::Union{Nothing,Integer}=nothing, base::Union{Nothing,Integer}=nothing)
     nv = FixedPoint(z.value, z.precision)
@@ -252,10 +290,10 @@ function maxprecision(x::FixedPoint, y::FixedPoint)
 end
 
 function modf(x::FixedPoint)
-    sign = x.value < 0 ? -1 : 1
+    s = x.value < 0 ? -1 : 1
     ipart = abs(x.value) ÷ (10^x.precision)
     fpart = abs(x.value) - (ipart * (10^x.precision))
-    return (ipart * sign, fpart * sign)
+    return (ipart * s, fpart * s)
 end
 
 (==)(z::FixedPoint, w::FixedPoint) = eq(z, w)
@@ -414,6 +452,8 @@ end
 (rad2deg)(z::FixedPoint) = (FixedPoint(rad2deg(Float64(z)), z.precision))
 
 (hypot)(x::FixedPoint, y::FixedPoint) = (FixedPoint(hypot(Float64(x),Float64(y)), maxprecision(x,y)))
+(hypot)(x::FixedPoint, y::Number) = (FixedPoint(hypot(Float64(x),y), x.precision))
+(hypot)(x::Number, y::FixedPoint) = (FixedPoint(hypot(x,Float64(y)), y.precision))
 
 (frexp)(z::FixedPoint) = (FixedPoint(frexp(Float64(z)), z.precision))
 
@@ -421,5 +461,11 @@ end
 
 (-)(z::FixedPoint) = (FixedPoint(-(z.value), z.precision))
 (+)(z::FixedPoint) = (FixedPoint(+(z.value), z.precision))
+
+(ispow2)((z::FixedPoint) = (FixedPoint(ispow2(Float64(z)), z.precision)))
+
+(prevpow)(x::FixedPoint, y::FixedPoint) = (FixedPoint(prevpow(Float64(x),Float64(y)), maxprecision(x,y)))
+(prevpow)(x::FixedPoint, y::Number) = (FixedPoint(prevpow(Float64(x),y), x.precision))
+(prevpow)(x::Number, y::FixedPoint) = (FixedPoint(prevpow(x,Float64(y)), y.precision))
 
 end
