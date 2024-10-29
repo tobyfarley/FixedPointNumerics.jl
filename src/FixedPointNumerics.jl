@@ -418,7 +418,6 @@ end
 (exp10)(z::FixedPoint) = (FixedPoint(exp10(Float64(z)), z.precision))
 
 (sqrt)(z::FixedPoint) = (FixedPoint(sqrt(Float64(z)), z.precision))
-(√)(z::FixedPoint) = (FixedPoint(sqrt(Float64(z)), z.precision))
 (∛)(z::FixedPoint) = (FixedPoint(∛(Float64(z)), z.precision))
 (∜)(z::FixedPoint) = (FixedPoint(∜(Float64(z)), z.precision))
 
