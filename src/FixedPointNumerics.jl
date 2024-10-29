@@ -170,11 +170,6 @@ function add(z::FixedPoint, w::FixedPoint)
     return FixedPoint(x.value + y.value, x.precision)
 end
 
-function add(z::FixedPoint, w::FixedPoint)
-    (x, y) = scale(z, w)
-    return FixedPoint(x.value + y.value, x.precision)
-end
-
 function sub(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
     return FixedPoint(x.value - y.value, x.precision)
