@@ -1,6 +1,6 @@
 module FixedPointNumerics
 
-import Base.Float64, Base.AbstractFloat, Base.convert
+import Base.Float64, Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
@@ -13,7 +13,7 @@ import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldex
 import Base.ispow2, Base.invmod
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
 
-export FixedPoint, scale, AbstractFloat, Float64, convert
+export FixedPoint, scale, AbstractFloat, Float64, convert, string
 export ==, >=, <=, >, <, +, -, *, /, ^, ÷, \, %, √, ∛, ∜
 export show, log, log10, log2, sqrt, exp, exp2, exp10
 export sin,  sind, cos, cosd, cosh, tan, tand
@@ -71,7 +71,13 @@ function FixedPoint(v::V, p::P) where {V<:AbstractFloat, P<:Integer}
     FixedPoint{Int64,P}(Int64(trunc(round(v; digits=p) * (10^p))), Int64(p))
 end
 
-function show(io::IO, z::FixedPoint)
+function string(z::FixedPoint; base::Integer = 10, pad::Integer = 1)
+    if base ≠ 10
+        prinln("Warning: Bases other than 10 not yet implemented")
+    end;
+    if pad ≠ 1
+        println("Warning: Pad not yet implemented")
+    end
     s = string(abs(z.value))
     if z.value == 0
         fmt = "0." * repeat("0",z.precision)
@@ -80,6 +86,11 @@ function show(io::IO, z::FixedPoint)
     else
         fmt = (z.value < 0 ? "-" : "") * s[1:end-z.precision] * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     end
+    return fmt
+end    
+
+function show(io::IO, z::FixedPoint)
+    fmt = string(z)
     print(io, fmt)
 end
 
