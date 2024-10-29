@@ -1,7 +1,5 @@
 module FixedPointNumerics
 
-__precompile__(false)
-
 import Base.Float64, Base.AbstractFloat, Base.convert
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
