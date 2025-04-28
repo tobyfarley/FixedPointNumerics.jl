@@ -1,5 +1,3 @@
-module FixedPointNumerics
-
 import Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
@@ -508,5 +506,3 @@ end
 (prevpow)(z::FixedPoint, w::FixedPoint) = (FixedPoint(prevpow(Float(z),Float(w)), maxprecision(z,w)))
 (prevpow)(z::FixedPoint, w::Number) = (FixedPoint(prevpow(Float(z),w), z.precision))
 (prevpow)(z::Number, w::FixedPoint) = (FixedPoint(prevpow(z,Float(w)), w.precision))
-
-end
