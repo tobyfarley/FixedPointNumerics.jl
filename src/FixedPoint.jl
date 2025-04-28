@@ -292,7 +292,7 @@ println(x * 2)
 """
 parse(::Type{FixedPoint}, s::AbstractString) = tryparse_internal(FixedPoint, s)
 
-parse(::Type{FixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(FixedPoint, s)
+#parse(::Type{FixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(FixedPoint, s)
 
 function cmp(z::FixedPoint, w::FixedPoint)::Integer
     (x,y) = scale(z,w)
