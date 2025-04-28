@@ -65,7 +65,7 @@ function BigFixedPoint(v::V, p::P) where {V<:BigFloat, P<:Integer}
     if (v*(10^p)) > maxintfloat(typeof(v))
         throw(InexactError(BigFixedPoint, typeof(v), v))
     end    
-    BigFixedPoint{BigInt,P}(Int(trunc(round(v; digits=p) * (10^p))), Int(p))
+    BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
 function string(z::BigFixedPoint; base::Integer = 10, pad::Integer = 1)
@@ -126,12 +126,12 @@ function scale(z::BigFixedPoint, w::BigFixedPoint)
         return (z, w)
     elseif z.precision > w.precision
         y = BigFixedPoint(w.value, w.precision)
-        y.value = Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))
+        y.value = BigInt(trunc((Int(w.value) * 10^(z.precision - w.precision))))
         y.precision = z.precision
         return (z, y)
     elseif z.precision < w.precision
         x = BigFixedPoint(z.value, z.precision)
-        x.value = Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))
+        x.value = BigInt(trunc((Int(z.value) * 10^(w.precision - z.precision))))
         x.precision = w.precision
         return (x, w)
     end
@@ -139,38 +139,38 @@ end
    
 function scale!(z::BigFixedPoint, w::BigFixedPoint)
     if z.precision > w.precision
-        w.value = Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))
+        w.value = BigInt(trunc((Int(w.value) * 10^(z.precision - w.precision))))
         w.precision = z.precision
         return (z, w)
     else
-        z.value = Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))
+        z.value = BigInt(trunc((Int(z.value) * 10^(w.precision - z.precision))))
         z.precision = w.precision
         return (z, w)
     end
 end
 
 function eq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value == Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (w.value == Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value == BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value == Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function neq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value != Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (w.value != Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value != BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value != Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function gteq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value >= Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) >= w.value)
+    return (z.precision > w.precision ? (z.value >= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) >= w.value)
 end
 
 function lteq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value <= Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) <= w.value)
+    return (z.precision > w.precision ? (z.value <= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) <= w.value)
 end
 
 function gt(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value > Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) > w.value)
+    return (z.precision > w.precision ? (z.value > BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) > w.value)
 end
 
 function lt(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision < w.precision ? (z.value < Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) < w.value)
+    return (z.precision < w.precision ? (z.value < BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) < w.value)
 end
 
 function add(z::BigFixedPoint, w::BigFixedPoint)
@@ -269,7 +269,7 @@ function tryparse_internal(::Type{BigFixedPoint}, s::String)
            throw(ArgumentError("Cannot process $(s) a BigFixedPoint type"))
         else
             n.precision = length(s[decloc+1:end])
-            n.value = Int(trunc(z*(10^n.precision)))
+            n.value = BigInt(trunc(z*(10^n.precision)))
         end
     end
     return n
