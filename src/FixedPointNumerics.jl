@@ -1,6 +1,6 @@
 module FixedPointNumerics
 
-import Base.Float, Base.AbstractFloat, Base.convert, Base.string
+import Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
@@ -13,7 +13,7 @@ import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldex
 import Base.ispow2, Base.invmod
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
 
-export FixedPoint, scale, AbstractFloat, Float, convert, string
+export FixedPoint, scale, AbstractFloat, convert, string
 export ==, >=, <=, >, <, +, -, *, /, ^, ÷, \, %, √, ∛, ∜
 export show, log, log10, log2, sqrt, exp, exp2, exp10
 export sin,  sind, cos, cosd, cosh, tan, tand
