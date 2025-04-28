@@ -258,7 +258,7 @@ function round(z::FixedPoint, r::RoundingMode=RoundNearest;
 end
 
 function tryparse_internal(::Type{FixedPoint}, s::String)
-    z = parse(Float, s)
+    z = parse(Float64, s)
     n = FixedPoint(0,2)
     if !isnothing(findfirst('e',s))
         if findfirst('e',string(z))
