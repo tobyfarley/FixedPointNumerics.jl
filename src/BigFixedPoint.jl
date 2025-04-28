@@ -93,9 +93,9 @@ end
 
 function sign(z::BigFixedPoint)
     if z.value == 0
-        return BigFixedPoint(0,z.precision)
+        return BigFixedPoint(BigInt(0),z.precision)
     else
-        return z.value < 0 ? BigFixedPoint(-1 * 10^z.precision,z.precision) : BigFixedPoint(1 * 10^z.precision,z.precision)
+        return z.value < 0 ? BigFixedPoint(BigInt(-1) * BigInt(10)^BigInt(z.precision),z.precision) : BigFixedPoint(BigInt(1) * BigInt(10)^BigInt(z.precision),z.precision)
     end
 end
 
@@ -258,7 +258,7 @@ end
 
 function tryparse_internal(::Type{BigFixedPoint}, s::String)
     z = parse(BigFloat, s)
-    n = BigFixedPoint(0,2)
+    n = BigFixedPoint(BigInt(0),2)
     if !isnothing(findfirst('e',s))
         if findfirst('e',string(z))
             throw(InexactError(:parse, BigFixedPoint, s))
