@@ -1,4 +1,4 @@
-import Base.AbstractFloat, Base.convert, Base.string
+import Base.Float64, Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
