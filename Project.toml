@@ -1,7 +1,7 @@
 name = "FixedPointNumerics"
 uuid = "667e4c0e-a733-4321-83c7-c10aa58aff6a"
 authors = ["Toby Farley <tobyfarley@gmail.com>"]
-version = "0.2.6"
+version = "0.2.7"
 
 [compat]
 julia = "^1"

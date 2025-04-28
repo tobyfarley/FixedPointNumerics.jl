@@ -8,7 +8,7 @@ include("BigFixedPoint.jl")
         return x==y
 end
 
-==(z::FixedPoint, w::BigFixedPoint) = function (z,w)
+==(z::BigFixedPoint, w::FixedPoint) = function (z,w)
     (x,y) = scale(BigFixedPoint(BigInt(w.value),w.precision),z)
     return x==y
 end
