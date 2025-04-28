@@ -1,5 +1,7 @@
 module FixedPointNumerics
 
+export ==
+
 include("FixedPoint.jl")
 include("BigFixedPoint.jl")
 
