@@ -1,6 +1,6 @@
 module FixedPointNumerics
 
-import Base.Float64, Base.AbstractFloat, Base.convert, Base.string
+import Base.Float, Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
@@ -13,7 +13,7 @@ import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldex
 import Base.ispow2, Base.invmod
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
 
-export FixedPoint, scale, AbstractFloat, Float64, convert, string
+export FixedPoint, scale, AbstractFloat, Float, convert, string
 export ==, >=, <=, >, <, +, -, *, /, ^, ÷, \, %, √, ∛, ∜
 export show, log, log10, log2, sqrt, exp, exp2, exp10
 export sin,  sind, cos, cosd, cosh, tan, tand
@@ -45,7 +45,7 @@ println(x * 2)
 82.50 
 ```
 All math operators are supported as well as most math functions. When calling math functions the number
-is converted to a Float64 and then back to FixedPoint type. The number of digits are preserved. When
+is converted to a Float and then back to FixedPoint type. The number of digits are preserved. When
 types with mixed precision are mixed all operands and the result are widened to the maximum precision 
 of all operands. The return type of equations and math functions are almost always goint to be a FixedPoint
 type value.
@@ -60,7 +60,7 @@ mutable struct FixedPoint{V<:Integer,P<:Integer} <: AbstractFloat
 
 end
 
-FixedPoint(v::V, p::P) where {V<:Int64, P<:Integer} = FixedPoint{V,P}(v, p)
+FixedPoint(v::V, p::P) where {V<:Int, P<:Integer} = FixedPoint{V,P}(v, p)
 
 FixedPoint(v::V, p::P) where {V<:Int128, P<:Integer} = FixedPoint{V,P}(v, p)
 
@@ -68,7 +68,7 @@ function FixedPoint(v::V, p::P) where {V<:AbstractFloat, P<:Integer}
     if (v*(10^p)) > maxintfloat(typeof(v))
         throw(InexactError(FixedPoint, typeof(v), v))
     end    
-    FixedPoint{Int64,P}(Int64(trunc(round(v; digits=p) * (10^p))), Int64(p))
+    FixedPoint{Int,P}(Int(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
 function string(z::FixedPoint; base::Integer = 10, pad::Integer = 1)
@@ -129,12 +129,12 @@ function scale(z::FixedPoint, w::FixedPoint)
         return (z, w)
     elseif z.precision > w.precision
         y = FixedPoint(w.value, w.precision)
-        y.value = Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))
+        y.value = Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))
         y.precision = z.precision
         return (z, y)
     elseif z.precision < w.precision
         x = FixedPoint(z.value, z.precision)
-        x.value = Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))
+        x.value = Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))
         x.precision = w.precision
         return (x, w)
     end
@@ -142,38 +142,38 @@ end
    
 function scale!(z::FixedPoint, w::FixedPoint)
     if z.precision > w.precision
-        w.value = Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))
+        w.value = Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))
         w.precision = z.precision
         return (z, w)
     else
-        z.value = Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))
+        z.value = Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))
         z.precision = w.precision
         return (z, w)
     end
 end
 
 function eq(z::FixedPoint, w::FixedPoint)
-    return (z.precision > w.precision ? (z.value == Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (w.value == Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value == Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (w.value == Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function neq(z::FixedPoint, w::FixedPoint)
-    return (z.precision > w.precision ? (z.value != Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (w.value != Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value != Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (w.value != Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function gteq(z::FixedPoint, w::FixedPoint)
-    return (z.precision > w.precision ? (z.value >= Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))) >= w.value)
+    return (z.precision > w.precision ? (z.value >= Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) >= w.value)
 end
 
 function lteq(z::FixedPoint, w::FixedPoint)
-    return (z.precision > w.precision ? (z.value <= Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))) <= w.value)
+    return (z.precision > w.precision ? (z.value <= Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) <= w.value)
 end
 
 function gt(z::FixedPoint, w::FixedPoint)
-    return (z.precision > w.precision ? (z.value > Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))) > w.value)
+    return (z.precision > w.precision ? (z.value > Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) > w.value)
 end
 
 function lt(z::FixedPoint, w::FixedPoint)
-    return (z.precision < w.precision ? (z.value < Int64(trunc((Int64(w.value) * 10^(z.precision - w.precision))))) : (Int64(trunc((Int64(z.value) * 10^(w.precision - z.precision))))) < w.value)
+    return (z.precision < w.precision ? (z.value < Int(trunc((Int(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) < w.value)
 end
 
 function add(z::FixedPoint, w::FixedPoint)
@@ -218,7 +218,7 @@ end
 
 function pwr(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
-    result = round(Float64(x.value / 10^x.precision)^Float64(y.value / 10^y.precision), digits=2)
+    result = round(Float(x.value / 10^x.precision)^Float(y.value / 10^y.precision), digits=2)
     return FixedPoint(result, x.precision)
 end
 
@@ -260,7 +260,7 @@ function round(z::FixedPoint, r::RoundingMode=RoundNearest;
 end
 
 function tryparse_internal(::Type{FixedPoint}, s::String)
-    z = parse(Float64, s)
+    z = parse(Float, s)
     n = FixedPoint(0,2)
     if !isnothing(findfirst('e',s))
         if findfirst('e',string(z))
@@ -272,7 +272,7 @@ function tryparse_internal(::Type{FixedPoint}, s::String)
            throw(ArgumentError("Cannot process $(s) a FixedPoint type"))
         else
             n.precision = length(s[decloc+1:end])
-            n.value = Int64(trunc(z*(10^n.precision)))
+            n.value = Int(trunc(z*(10^n.precision)))
         end
     end
     return n
@@ -323,7 +323,7 @@ function AbstractFloat(z::FixedPoint)
     return z.value / (10^z.precision)
 end
 
-function Float64(z::FixedPoint)
+function Float(z::FixedPoint)
     return z.value / (10^z.precision)
 end
 
@@ -341,32 +341,32 @@ end
 (==)(z::FixedPoint, w::FixedPoint) = eq(z, w)
 (==)(z::Integer, w::FixedPoint) = eq(FixedPoint(z,0), w)
 (==)(z::FixedPoint, w::Integer) = eq(z, FixedPoint(w,0))
-(==)(z::AbstractFloat, w::FixedPoint) = (z == Float64(w))
-(==)(z::FixedPoint, w::AbstractFloat) = (Float64(z) == w)
+(==)(z::AbstractFloat, w::FixedPoint) = (z == Float(w))
+(==)(z::FixedPoint, w::AbstractFloat) = (Float(z) == w)
 
 (>=)(z::FixedPoint, w::FixedPoint) = gteq(z, w)
 (>=)(z::Integer, w::FixedPoint) = gteq(FixedPoint(z,0), w)
 (>=)(z::FixedPoint, w::Integer) = gteq(z, FixedPoint(w,0))
-(>=)(z::AbstractFloat, w::FixedPoint) = (Float64(z) >= w)
-(>=)(z::FixedPoint, w::AbstractFloat) = (z >- Float64(w))
+(>=)(z::AbstractFloat, w::FixedPoint) = (Float(z) >= w)
+(>=)(z::FixedPoint, w::AbstractFloat) = (z >- Float(w))
 
 (<=)(z::FixedPoint, w::FixedPoint) = lteq(z, w)
 (<=)(z::Integer, w::FixedPoint) = lteq(FixedPoint(z,0), w)
 (<=)(z::FixedPoint, w::Integer) = lteq(z, FixedPoint(w,0))
-(<=)(z::AbstractFloat, w::FixedPoint) = (z <= Float64(w))
-(<=)(z::FixedPoint, w::AbstractFloat) = (Float64(z) <= w)
+(<=)(z::AbstractFloat, w::FixedPoint) = (z <= Float(w))
+(<=)(z::FixedPoint, w::AbstractFloat) = (Float(z) <= w)
 
 (<)(z::FixedPoint, w::FixedPoint) = lt(z, w)
 (<)(z::Integer, w::FixedPoint) = lt(FixedPoint(z,0), w)
 (<)(z::FixedPoint, w::Integer) = lt(z, FixedPoint(w,0))
-(<)(z::AbstractFloat, w::FixedPoint) = (z < Float64(w))
-(<)(z::FixedPoint, w::AbstractFloat) = (Float(64) < w)
+(<)(z::AbstractFloat, w::FixedPoint) = (z < Float(w))
+(<)(z::FixedPoint, w::AbstractFloat) = (Float(z) < w)
 
 (>)(z::FixedPoint, w::FixedPoint) = gt(z, w)
 (>)(z::Integer, w::FixedPoint) = gt(FixedPoint(z,0), w)
 (>)(z::FixedPoint, w::Integer) = gt(z, FixedPoint(w,0))
-(>)(z::AbstractFloat, w::FixedPoint) = (z > Float64(w))
-(>)(z::FixedPoint, w::AbstractFloat) = (Float64(z) > w)
+(>)(z::AbstractFloat, w::FixedPoint) = (z > Float(w))
+(>)(z::FixedPoint, w::AbstractFloat) = (Float(z) > w)
 
 (+)(z::FixedPoint, w::FixedPoint) = add(z, w)
 (+)(z::Integer, w::FixedPoint) = add(FixedPoint(z,0), w)
@@ -416,97 +416,97 @@ end
 (%)(z::AbstractFloat, w::FixedPoint) = rem(parse(FixedPoint, string(z)), w)
 (%)(z::FixedPoint, w::AbstractFloat) = rem(z, parse(FixedPoint, string(w)))
 
-(log)(z::FixedPoint) = (FixedPoint(log(Float64(z)),z.precision))
-(log)(b::FixedPoint,z::FixedPoint) = (FixedPoint(log(Float64(b),Float64(z)),maxprecision(b,z)))
-(log)(b::Number,z::FixedPoint) = (FixedPoint(log(b, Float64(z)), z.precision))
-(log)(b::FixedPoint,z::Number) = (FixedPoint(log(FLoat64(b), z), z.precision))
-(log10)(z::FixedPoint) = (FixedPoint(log10(Float64(z)), z.precision))
-(log2)(z::FixedPoint) = (FixedPoint(log2(Float64(z)), z.precision))
-(log1p)(z::FixedPoint) = (FixedPoint(log1p(Float64(z)), z.precision))
+(log)(z::FixedPoint) = (FixedPoint(log(Float(z)),z.precision))
+(log)(b::FixedPoint,z::FixedPoint) = (FixedPoint(log(Float(b),Float(z)),maxprecision(b,z)))
+(log)(b::Number,z::FixedPoint) = (FixedPoint(log(b, Float(z)), z.precision))
+(log)(b::FixedPoint,z::Number) = (FixedPoint(log(Float(b), z), z.precision))
+(log10)(z::FixedPoint) = (FixedPoint(log10(Float(z)), z.precision))
+(log2)(z::FixedPoint) = (FixedPoint(log2(Float(z)), z.precision))
+(log1p)(z::FixedPoint) = (FixedPoint(log1p(Float(z)), z.precision))
 
-(exp)(z::FixedPoint) = (FixedPoint(exp(Float64(z)), z.precision))
-(exp2)(z::FixedPoint) = (FixedPoint(exp2(Float64(z)), z.precision))
-(exp10)(z::FixedPoint) = (FixedPoint(exp10(Float64(z)), z.precision))
+(exp)(z::FixedPoint) = (FixedPoint(exp(Float(z)), z.precision))
+(exp2)(z::FixedPoint) = (FixedPoint(exp2(Float(z)), z.precision))
+(exp10)(z::FixedPoint) = (FixedPoint(exp10(Float(z)), z.precision))
 
-(√)(z::FixedPoint) = (FixedPoint(√(Float64(z)), z.precision))
-(∛)(z::FixedPoint) = (FixedPoint(∛(Float64(z)), z.precision))
-(∜)(z::FixedPoint) = (FixedPoint(∜(Float64(z)), z.precision))
+(√)(z::FixedPoint) = (FixedPoint(√(Float(z)), z.precision))
+(∛)(z::FixedPoint) = (FixedPoint(∛(Float(z)), z.precision))
+(∜)(z::FixedPoint) = (FixedPoint(∜(Float(z)), z.precision))
 
-(cos)(z::FixedPoint) = (FixedPoint(cos(Float64(z)), z.precision))
-(cosc)(z::FixedPoint) = (FixedPoint(cosc(Float64(z)), z.precision))
-(cosd)(z::FixedPoint) = (FixedPoint(cosd(Float64(z)), z.precision))
-(cosh)(z::FixedPoint) = (FixedPoint(cosh(Float64(z)), z.precision))
+(cos)(z::FixedPoint) = (FixedPoint(cos(Float(z)), z.precision))
+(cosc)(z::FixedPoint) = (FixedPoint(cosc(Float(z)), z.precision))
+(cosd)(z::FixedPoint) = (FixedPoint(cosd(Float(z)), z.precision))
+(cosh)(z::FixedPoint) = (FixedPoint(cosh(Float(z)), z.precision))
 
-(tan)(z::FixedPoint) = (FixedPoint(tan(Float64(z)), z.precision))
-(tanc)(z::FixedPoint) = (FixedPoint(tanc(Float64(z)), z.precision))
-(tand)(z::FixedPoint) = (FixedPoint(tand(Float64(z)), z.precision))
+(tan)(z::FixedPoint) = (FixedPoint(tan(Float(z)), z.precision))
+(tanc)(z::FixedPoint) = (FixedPoint(tanc(Float(z)), z.precision))
+(tand)(z::FixedPoint) = (FixedPoint(tand(Float(z)), z.precision))
 
-(sin)(z::FixedPoint) = (FixedPoint(sin(Float64(z)), z.precision))
-(sinc)(z::FixedPoint) = (FixedPoint(sinc(Float64(z)), z.precision))
-(sind)(z::FixedPoint) = (FixedPoint(sind(Float64(z)), z.precision))
-(sinh)(z::FixedPoint) = (FixedPoint(sinh(Float64(z)), z.precision))
+(sin)(z::FixedPoint) = (FixedPoint(sin(Float(z)), z.precision))
+(sinc)(z::FixedPoint) = (FixedPoint(sinc(Float(z)), z.precision))
+(sind)(z::FixedPoint) = (FixedPoint(sind(Float(z)), z.precision))
+(sinh)(z::FixedPoint) = (FixedPoint(sinh(Float(z)), z.precision))
 
-(sincos)(z::FixedPoint) = (FixedPoint(sincos(Float64(z)), z.precision))
-(sincosd)(z::FixedPoint) = (FixedPoint(sincosd(Float64(z)), z.precision))
-(sincospi)(z::FixedPoint) = (FixedPoint(sincospi(Float64(z)), z.precision))
+(sincos)(z::FixedPoint) = (FixedPoint(sincos(Float(z)), z.precision))
+(sincosd)(z::FixedPoint) = (FixedPoint(sincosd(Float(z)), z.precision))
+(sincospi)(z::FixedPoint) = (FixedPoint(sincospi(Float(z)), z.precision))
 
-(atan)(z::FixedPoint) = (FixedPoint(atan(Float64(z)), z.precision))
-(atan)(z::FixedPoint,w::FixedPoint) = (FixedPoint(atan(Float64(z),Float64(w)), maxprecision(z,w)))
-(atan)(z::FixedPoint,w::Number) = (FixedPoint(atan(Float64(z),w), z.precision))
-(atan)(z::Number,w::FixedPoint) = (FixedPoint(atan(z,Float64(w)), x.precision))
-(atand)(z::FixedPoint) = (FixedPoint(atand(Float64(z)), z.precision))
-(atanh)(z::FixedPoint) = (FixedPoint(atanh(Float64(z)), z.precision))
+(atan)(z::FixedPoint) = (FixedPoint(atan(Float(z)), z.precision))
+(atan)(z::FixedPoint,w::FixedPoint) = (FixedPoint(atan(Float(z),Float(w)), maxprecision(z,w)))
+(atan)(z::FixedPoint,w::Number) = (FixedPoint(atan(Float(z),w), z.precision))
+(atan)(z::Number,w::FixedPoint) = (FixedPoint(atan(z,Float(w)), x.precision))
+(atand)(z::FixedPoint) = (FixedPoint(atand(Float(z)), z.precision))
+(atanh)(z::FixedPoint) = (FixedPoint(atanh(Float(z)), z.precision))
 
-(sec)(z::FixedPoint) = (FixedPoint(sec(Float64(z)), z.precision))
-(secd)(z::FixedPoint) = (FixedPoint(secd(Float64(z)), z.precision))
-(sech)(z::FixedPoint) = (FixedPoint(sech(Float64(z)), z.precision))
+(sec)(z::FixedPoint) = (FixedPoint(sec(Float(z)), z.precision))
+(secd)(z::FixedPoint) = (FixedPoint(secd(Float(z)), z.precision))
+(sech)(z::FixedPoint) = (FixedPoint(sech(Float(z)), z.precision))
 
-(csc)(z::FixedPoint) = (FixedPoint(csc(Float64(z)), z.precision))
-(cscd)(z::FixedPoint) = (FixedPoint(cscd(Float64(z)), z.precision))
-(csch)(z::FixedPoint) = (FixedPoint(csch(Float64(z)), z.precision))
+(csc)(z::FixedPoint) = (FixedPoint(csc(Float(z)), z.precision))
+(cscd)(z::FixedPoint) = (FixedPoint(cscd(Float(z)), z.precision))
+(csch)(z::FixedPoint) = (FixedPoint(csch(Float(z)), z.precision))
 
-(cot)(z::FixedPoint) = (FixedPoint(cot(Float64(z)), z.precision))
-(cotd)(z::FixedPoint) = (FixedPoint(cotd(Float64(z)), z.precision))
-(coth)(z::FixedPoint) = (FixedPoint(coth(Float64(z)), z.precision))
+(cot)(z::FixedPoint) = (FixedPoint(cot(Float(z)), z.precision))
+(cotd)(z::FixedPoint) = (FixedPoint(cotd(Float(z)), z.precision))
+(coth)(z::FixedPoint) = (FixedPoint(coth(Float(z)), z.precision))
 
-(asec)(z::FixedPoint) = (FixedPoint(asec(Float64(z)), z.precision))
-(asecd)(z::FixedPoint) = (FixedPoint(asecd(Float64(z)), z.precision))
-(asech)(z::FixedPoint) = (FixedPoint(asech(Float64(z)), z.precision))
+(asec)(z::FixedPoint) = (FixedPoint(asec(Float(z)), z.precision))
+(asecd)(z::FixedPoint) = (FixedPoint(asecd(Float(z)), z.precision))
+(asech)(z::FixedPoint) = (FixedPoint(asech(Float(z)), z.precision))
 
-(acsc)(z::FixedPoint) = (FixedPoint(acsc(Float64(z)), z.precision))
-(acscd)(z::FixedPoint) = (FixedPoint(acscd(Float64(z)), z.precision))
-(acsch)(z::FixedPoint) = (FixedPoint(acsch(Float64(z)), z.precision))
+(acsc)(z::FixedPoint) = (FixedPoint(acsc(Float(z)), z.precision))
+(acscd)(z::FixedPoint) = (FixedPoint(acscd(Float(z)), z.precision))
+(acsch)(z::FixedPoint) = (FixedPoint(acsch(Float(z)), z.precision))
 
-(acot)(z::FixedPoint) = (FixedPoint(acot(Float64(z)), z.precision))
-(acotd)(z::FixedPoint) = (FixedPoint(acotd(Float64(z)), z.precision))
-(acoth)(z::FixedPoint) = (FixedPoint(acoth(Float64(z)), z.precision))
+(acot)(z::FixedPoint) = (FixedPoint(acot(Float(z)), z.precision))
+(acotd)(z::FixedPoint) = (FixedPoint(acotd(Float(z)), z.precision))
+(acoth)(z::FixedPoint) = (FixedPoint(acoth(Float(z)), z.precision))
 
-(asin)(z::FixedPoint) = (FixedPoint(asin(Float64(z)), z.precision))
-(asind)(z::FixedPoint) = (FixedPoint(asind(Float64(z)), z.precision))
-(asinh)(z::FixedPoint) = (FixedPoint(asinh(Float64(z)), z.precision))
+(asin)(z::FixedPoint) = (FixedPoint(asin(Float(z)), z.precision))
+(asind)(z::FixedPoint) = (FixedPoint(asind(Float(z)), z.precision))
+(asinh)(z::FixedPoint) = (FixedPoint(asinh(Float(z)), z.precision))
 
-(acos)(z::FixedPoint) = (FixedPoint(acos(Float64(z)), z.precision))
-(acosd)(z::FixedPoint) = (FixedPoint(acosd(Float64(z)), z.precision))
-(acosh)(z::FixedPoint) = (FixedPoint(acosh(Float64(z)), z.precision))
+(acos)(z::FixedPoint) = (FixedPoint(acos(Float(z)), z.precision))
+(acosd)(z::FixedPoint) = (FixedPoint(acosd(Float(z)), z.precision))
+(acosh)(z::FixedPoint) = (FixedPoint(acosh(Float(z)), z.precision))
 
-(deg2rad)(z::FixedPoint) = (FixedPoint(deg2rad(Float64(z)), z.precision))
-(rad2deg)(z::FixedPoint) = (FixedPoint(rad2deg(Float64(z)), z.precision))
+(deg2rad)(z::FixedPoint) = (FixedPoint(deg2rad(Float(z)), z.precision))
+(rad2deg)(z::FixedPoint) = (FixedPoint(rad2deg(Float(z)), z.precision))
 
-(hypot)(z::FixedPoint, w::FixedPoint) = (FixedPoint(hypot(Float64(z),Float64(w)), maxprecision(z,w)))
-(hypot)(z::FixedPoint, w::Number) = (FixedPoint(hypot(Float64(z),w), z.precision))
-(hypot)(z::Number, w::FixedPoint) = (FixedPoint(hypot(z,Float64(w)), w.precision))
+(hypot)(z::FixedPoint, w::FixedPoint) = (FixedPoint(hypot(Float(z),Float(w)), maxprecision(z,w)))
+(hypot)(z::FixedPoint, w::Number) = (FixedPoint(hypot(Float(z),w), z.precision))
+(hypot)(z::Number, w::FixedPoint) = (FixedPoint(hypot(z,Float(w)), w.precision))
 
-(frexp)(z::FixedPoint) = (FixedPoint(frexp(Float64(z)), z.precision))
+(frexp)(z::FixedPoint) = (FixedPoint(frexp(Float(z)), z.precision))
 
-(ldexp)(z::FixedPoint, w::FixedPoint) = (FixedPoint(ldexp(Float64(z),Float64(w)), maxprecision(z,w)))
+(ldexp)(z::FixedPoint, w::FixedPoint) = (FixedPoint(ldexp(Float(z),Float(w)), maxprecision(z,w)))
 
 (-)(z::FixedPoint) = (FixedPoint(-(z.value), z.precision))
 (+)(z::FixedPoint) = (FixedPoint(+(z.value), z.precision))
 
-(ispow2)(z::FixedPoint) = (FixedPoint(ispow2(Float64(z)), z.precision))
+(ispow2)(z::FixedPoint) = (FixedPoint(ispow2(Float(z)), z.precision))
 
-(prevpow)(z::FixedPoint, w::FixedPoint) = (FixedPoint(prevpow(Float64(z),Float64(w)), maxprecision(z,w)))
-(prevpow)(z::FixedPoint, w::Number) = (FixedPoint(prevpow(Float64(z),w), z.precision))
-(prevpow)(z::Number, w::FixedPoint) = (FixedPoint(prevpow(z,Float64(w)), w.precision))
+(prevpow)(z::FixedPoint, w::FixedPoint) = (FixedPoint(prevpow(Float(z),Float(w)), maxprecision(z,w)))
+(prevpow)(z::FixedPoint, w::Number) = (FixedPoint(prevpow(Float(z),w), z.precision))
+(prevpow)(z::Number, w::FixedPoint) = (FixedPoint(prevpow(z,Float(w)), w.precision))
 
 end
