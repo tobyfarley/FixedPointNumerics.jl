@@ -65,6 +65,11 @@ function BigFixedPoint(v::V, p::P) where {V<:BigFloat,P<:Integer}
     BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
+function BigFixedPoint(v::V) where {V<:AbstractFloat}
+    x = string(v)
+    return tryparse_internal(FixedPoint,x) 
+end
+
 function BigFixedPoint(v::Int64, p::Int64)
     BigFixedPoint(BigInt(v), p)
 end
@@ -343,8 +348,8 @@ end
 (==)(z::BigFixedPoint, w::BigFixedPoint) = eq(z, w)
 (==)(z::Integer, w::BigFixedPoint) = eq(BigFixedPoint(z, 0), w)
 (==)(z::BigFixedPoint, w::Integer) = eq(z, BigFixedPoint(w, 0))
-(==)(z::AbstractFloat, w::BigFixedPoint) = (z == BigFloat(w))
-(==)(z::BigFixedPoint, w::AbstractFloat) = (BigFloat(z) == w)
+(==)(z::AbstractFloat, w::BigFixedPoint) = (BigFixedPoint(z) == w)
+(==)(z::BigFixedPoint, w::AbstractFloat) = (z == BigFixedPoint(w))
 
 (>=)(z::BigFixedPoint, w::BigFixedPoint) = gteq(z, w)
 (>=)(z::Integer, w::BigFixedPoint) = gteq(BigFixedPoint(z, 0), w)
