@@ -11,7 +11,7 @@ Basically
     parse(::FixedPoint, s::String) will attempt to parse a string finding the decimal point and creating a fixed point number
         with the number of digits past the decimal point as the number of places
 
-    There is BigFixedPoint with similar interface
+    There is a BigFixedPoint with similar interface
 
 Basic math operations and some higher math functionality availiable. Every equation will widen a fixed point number to the 
 largest precision of any fixed point number in the equation. For example, multiplying a number of two decimal places by one of four places
