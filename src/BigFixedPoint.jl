@@ -326,7 +326,7 @@ function AbstractFloat(z::BigFixedPoint)
 end
 
 function BigFloat(z::BigFixedPoint)
-    return z.value / (10^z.precision)
+    return round(z.value / (10^z.precision); digits = z.precision)
 end
 
 function maxprecision(z::BigFixedPoint, w::BigFixedPoint)
