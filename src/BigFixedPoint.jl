@@ -127,12 +127,12 @@ function scale(z::BigFixedPoint, w::BigFixedPoint)
         return (z, w)
     elseif z.precision > w.precision
         y = BigFixedPoint(w.value, w.precision)
-        y.value = BigInt(trunc((Int(w.value) * 10^(z.precision - w.precision))))
+        y.value = BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))
         y.precision = z.precision
         return (z, y)
     elseif z.precision < w.precision
         x = BigFixedPoint(z.value, z.precision)
-        x.value = BigInt(trunc((Int(z.value) * 10^(w.precision - z.precision))))
+        x.value = BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))
         x.precision = w.precision
         return (x, w)
     end
@@ -140,38 +140,38 @@ end
 
 function scale!(z::BigFixedPoint, w::BigFixedPoint)
     if z.precision > w.precision
-        w.value = BigInt(trunc((Int(w.value) * 10^(z.precision - w.precision))))
+        w.value = BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))
         w.precision = z.precision
         return (z, w)
     else
-        z.value = BigInt(trunc((Int(z.value) * 10^(w.precision - z.precision))))
+        z.value = BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))
         z.precision = w.precision
         return (z, w)
     end
 end
 
 function eq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value == BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value == Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value == BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value == BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function neq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value != BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value != Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))))
+    return (z.precision > w.precision ? (z.value != BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (w.value != BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))))
 end
 
 function gteq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value >= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) >= w.value)
+    return (z.precision > w.precision ? (z.value >= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))) >= w.value)
 end
 
 function lteq(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value <= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) <= w.value)
+    return (z.precision > w.precision ? (z.value <= BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))) <= w.value)
 end
 
 function gt(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision > w.precision ? (z.value > BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) > w.value)
+    return (z.precision > w.precision ? (z.value > BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))) > w.value)
 end
 
 function lt(z::BigFixedPoint, w::BigFixedPoint)
-    return (z.precision < w.precision ? (z.value < BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (Int(trunc((Int(z.value) * 10^(w.precision - z.precision))))) < w.value)
+    return (z.precision < w.precision ? (z.value < BigInt(trunc((BigInt(w.value) * 10^(z.precision - w.precision))))) : (BigInt(trunc((BigInt(z.value) * 10^(w.precision - z.precision))))) < w.value)
 end
 
 function add(z::BigFixedPoint, w::BigFixedPoint)
