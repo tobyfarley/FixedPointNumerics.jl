@@ -214,7 +214,7 @@ end
 (==)(z::BigFixedPoint, w::FixedPoint) = eq(z, w)
 (==)(z::FixedPoint, w::BigFixedPoint) = eq(z, w)
 
-(>=)(z::BigFixedPoint, w::BigFixedPoint) = gteq(z, w)
+(>=)(z::BigFixedPoint, w::FixedPoint) = gteq(z, w)
 (>=)(z::FixedPoint, w::BigFixedPoint) = gteq(z, w)
 
 (<=)(z::BigFixedPoint, w::BigFixedPoint) = lteq(z, w)
