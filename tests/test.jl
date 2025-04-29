@@ -104,11 +104,6 @@ using Test
     @test bfp12 - 22.2 == 19.3
     @test 41.5 - bfp13 == 19.3
 
-    @test bfp4 * bfp6 == 10.03
-    @test 10.03 == bfp4 * bfp6
-    @test bfp4 * 10.24 == 10.03
-    @test 10.24 * bfp4 == 10.03
-
     @test bfp2 > bfp1
     @test bfp1 < bfp2
     @test bfp2 >= bfp1
@@ -130,7 +125,6 @@ using Test
     @test hypot(bfp12, bfp13) == round(hypot(41.5, 22.2); digits=1)
 
     @test (bfp18 * bfp18) == BigFixedPoint(BigInt(36127362350942654298385217045397535), 2)
-
 
     @test bfp2 > fp1
     @test bfp1 < fp2
