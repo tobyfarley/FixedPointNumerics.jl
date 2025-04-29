@@ -65,8 +65,12 @@ function BigFixedPoint(v::V, p::P) where {V<:BigFloat,P<:Integer}
     BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
-function BigFixedPoint(v::V, p::P) where {V<:Integer,P<:Integer}
-    BigFixedPoint{BigInt,P}(BigInt(trunc(round(BigFloat(v); digits=p) * (10^p))), Int(p))
+function BigFixedPoint(v::Int64, p::Int64)
+    BigFixedPoint(BigInt(v), p)
+end
+
+function BigFixedPoint(v::V, p::P) where {V<:AbstractFloat,P<:Integer}
+    BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
 function string(z::BigFixedPoint; base::Integer=10, pad::Integer=1)
