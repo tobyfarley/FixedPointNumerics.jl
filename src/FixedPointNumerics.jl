@@ -202,13 +202,11 @@ function cmp(z::FixedPoint, w::BigFixedPoint)
 end
 
 function maxprecision(z::BigFixedPoint, w::FixedPoint)
-    (x, y) = scale(z, BigFixedPoint(w))
-    return max(x, y)
+    return max(z.precision, w.precision)
 end
 
 function maxprecision(z::FixedPoint, w::BigFixedPoint)
-    (x, y) = scale(BigFixedPoint(z), w)
-    return max(x, y)
+    return max(z.precision, w.precision)
 end
 
 (==)(z::BigFixedPoint, w::FixedPoint) = eq(z, w)
