@@ -126,7 +126,7 @@ function mul(z::BigFixedPoint, w::FixedPoint)
     return eq(x, y)
 end
 
-function eq(z::FixedPoint, w::BigFixedPoint)
+function mul(z::FixedPoint, w::BigFixedPoint)
     (x, y) = scale(BigFixedPoint(z), w)
     return mul(x, y)
 end
