@@ -66,4 +66,25 @@ using Test
 
     @test hypot(fp12, fp13) == round(hypot(41.5,22.2);digits=1)
 
+    bfp1 = BigFixedPoint(102,2)
+    bfp2 = BigFixedPoint(1020,2)
+    bfp3 = BigFixedPoint(10020,3)
+    bfp4 = BigFixedPoint(98,2)
+    bfp5 = BigFixedPoint(98,2)
+    bfp6 = BigFixedPoint(10.24,2)
+    bfp7 = BigFixedPoint(15000,2)
+    bfp8 = BigFixedPoint(10000,2)
+    bfp9 = BigFixedPoint(2000,3)
+    bfp10 = BigFixedPoint(2100,2)
+    bfp11 = BigFixedPoint(415,2)
+    bfp12 = BigFixedPoint(415,1)
+    bfp13 = BigFixedPoint(222,1)
+    bfp14 = BigFixedPoint(14.2,1)
+    bfp15 = BigFixedPoint(1.3339,3)
+    bfp16 = BigFixedPoint(1,1)
+    bfp17 =BigFixedPoint(2,1)
+    
+    bfp18 = BigFixedPoint(1900719925474099256, 2 )
+    bfp18 = BigFixedPoint(1900719925474099256, 2 )
+    
 end

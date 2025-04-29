@@ -62,9 +62,6 @@ end
 BigFixedPoint(v::V, p::P) where {V<:BigInt,P<:Integer} = BigFixedPoint{V,P}(v, p)
 
 function BigFixedPoint(v::V, p::P) where {V<:BigFloat,P<:Integer}
-    if (v * (10^p)) > maxintfloat(typeof(v))
-        throw(InexactError(BigFixedPoint, typeof(v), v))
-    end
     BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
