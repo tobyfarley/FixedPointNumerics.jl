@@ -91,14 +91,14 @@ function gt(z::FixedPoint, w::BigFixedPoint)
     return gt(x, y)
 end
 
-function lq(z::BigFixedPoint, w::FixedPoint)
+function lt(z::BigFixedPoint, w::FixedPoint)
     (x, y) = scale(z, BigFixedPoint(w))
-    return lq(x, y)
+    return lt(x, y)
 end
 
-function lq(z::FixedPoint, w::BigFixedPoint)
+function lt(z::FixedPoint, w::BigFixedPoint)
     (x, y) = scale(BigFixedPoint(z), w)
-    return lq(x, y)
+    return lt(x, y)
 end
 
 function add(z::BigFixedPoint, w::FixedPoint)
