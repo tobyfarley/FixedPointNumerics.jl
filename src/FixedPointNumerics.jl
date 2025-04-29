@@ -217,41 +217,41 @@ end
 (>=)(z::BigFixedPoint, w::FixedPoint) = gteq(z, w)
 (>=)(z::FixedPoint, w::BigFixedPoint) = gteq(z, w)
 
-(<=)(z::BigFixedPoint, w::BigFixedPoint) = lteq(z, w)
+(<=)(z::BigFixedPoint, w::FixedPoint) = lteq(z, w)
 (<=)(z::FixedPoint, w::BigFixedPoint) = lteq(z, w)
 
-(<)(z::BigFixedPoint, w::BigFixedPoint) = lt(z, w)
+(<)(z::BigFixedPoint, w::FixedPoint) = lt(z, w)
 (<)(z::FixedPoint, w::BigFixedPoint) = lt(z, w)
 
-(>)(z::BigFixedPoint, w::BigFixedPoint) = gt(z, w)
+(>)(z::BigFixedPoint, w::FixedPoint) = gt(z, w)
 (>)(z::FixedPoint, w::BigFixedPoint) = gt(z, w)
 
-(+)(z::BigFixedPoint, w::BigFixedPoint) = add(z, w)
+(+)(z::BigFixedPoint, w::FixedPoint) = add(z, w)
 (+)(z::FixedPoint, w::BigFixedPoint) = add(z, w)
 
-(-)(z::BigFixedPoint, w::BigFixedPoint) = sub(z, w)
+(-)(z::BigFixedPoint, w::FixedPoint) = sub(z, w)
 (-)(z::FixedPoint, w::BigFixedPoint) = sub(z, w)
 
-(*)(z::BigFixedPoint, w::BigFixedPoint) = mul(z, w)
+(*)(z::BigFixedPoint, w::FixedPoint) = mul(z, w)
 (*)(z::FixedPoint, w::BigFixedPoint) = mul(z, w)
 
-(/)(z::BigFixedPoint, w::BigFixedPoint) = floatdiv(z, w)
+(/)(z::BigFixedPoint, w::FixedPoint) = floatdiv(z, w)
 (/)(z::FixedPoint, w::BigFixedPoint) = floatdiv(z, w)
 
-(\)(z::BigFixedPoint, w::BigFixedPoint) = invdiv(z, w)
+(\)(z::BigFixedPoint, w::FixedPoint) = invdiv(z, w)
 (\)(z::FixedPoint, w::BigFixedPoint) = invdiv(z, w)
 
-(^)(z::BigFixedPoint, w::BigFixedPoint) = pwr(z, w)
+(^)(z::BigFixedPoint, w::FixedPoint) = pwr(z, w)
 (^)(z::FixedPoint, w::BigFixedPoint) = pwr(z, w)
 
-(÷)(z::BigFixedPoint, w::BigFixedPoint) = intdiv(z, w)
+(÷)(z::BigFixedPoint, w::FixedPoint) = intdiv(z, w)
 (÷)(z::FixedPoint, w::BigFixedPoint) = intdiv(z, w)
 
-(%)(z::BigFixedPoint, w::BigFixedPoint) = rem(z, w)
+(%)(z::BigFixedPoint, w::FixedPoint) = rem(z, w)
 (%)(z::FixedPoint, w::BigFixedPoint) = rem(z, w)
 
-(log)(b::FixedPoint, z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(BigFixedPoint(b)), BigFloat(z)), z.precision))
 (log)(b::BigFixedPoint, z::FixedPoint) = (BigFixedPoint(log(BigFloat(b), BigFloat(BigFixedPoint(z))), z.precision))
+(log)(b::FixedPoint, z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(BigFixedPoint(b)), BigFloat(z)), z.precision))
 
 (atan)(z::BigFixedPoint, w::FixedPoint) = (BigFixedPoint(atan(BigFloat(z), BigFloat(BigFixedPoint(w))), maxprecision(z, w)))
 (atan)(z::FixedPoint, w::BigFixedPoint) = (BigFixedPoint(atan(BigFloat(BigFixedPoint(z)), BigFloat(w)), maxprecision(z, w)))
