@@ -2,7 +2,7 @@ import Base.BigFloat, Base.AbstractFloat, Base.convert, Base.string
 import Base.==, Base.>=, Base.<=, Base.>, Base.<, Base.+, Base.-, Base.*, Base./, Base.^, Base.÷, Base.\, Base.%
 import Base.√, Base.∛, Base.∜
 import Base.show, Base.log, Base.log10, Base.log2, Base.sqrt, Base.exp, Base.exp2, Base.exp10, Base.div
-import Base.sin, Base.sind, Base.cos, Base.cosd, Base.cosh ,Base.tan, Base.tand,  Base.sinh,  Base.cosc
+import Base.sin, Base.sind, Base.cos, Base.cosd, Base.cosh, Base.tan, Base.tand, Base.sinh, Base.cosc
 import Base.cmp, Base.sincos, Base.sincosd, Base.sincospi, Base.asin, Base.sec, Base.secd, Base.sech
 import Base.csc, Base.cscd, Base.csch, Base.cot, Base.cotd, Base.coth, Base.asec, Base.asecd, Base.asech
 import Base.acsc, Base.acscd, Base.acsch, Base.acot, Base.acotd, Base.acoth, Base.asin, Base.asind, Base.asinh
@@ -15,7 +15,7 @@ import Base.BigInt
 export BigFixedPoint, scale, AbstractFloat, BigFloat, convert, string
 export ==, >=, <=, >, <, +, -, *, /, ^, ÷, \, %, √, ∛, ∜
 export show, log, log10, log2, sqrt, exp, exp2, exp10
-export sin,  sind, cos, cosd, cosh, tan, tand
+export sin, sind, cos, cosd, cosh, tan, tand
 export cmp, sincos, sincosd, sincospi, asin, sec, secd, sech
 export csc, cscd, csch, cot, cotd, coth, asec, asecd, asech
 export acsc, acscd, ascsh, acot, acotd, acoth, asin, asind, asinh
@@ -59,32 +59,32 @@ mutable struct BigFixedPoint{V<:BigInt,P<:Integer} <: AbstractFloat
 
 end
 
-BigFixedPoint(v::V, p::P) where {V<:BigInt, P<:Integer} = BigFixedPoint{V,P}(v, p)
+BigFixedPoint(v::V, p::P) where {V<:BigInt,P<:Integer} = BigFixedPoint{V,P}(v, p)
 
-function BigFixedPoint(v::V, p::P) where {V<:BigFloat, P<:Integer}
-    if (v*(10^p)) > maxintfloat(typeof(v))
+function BigFixedPoint(v::V, p::P) where {V<:BigFloat,P<:Integer}
+    if (v * (10^p)) > maxintfloat(typeof(v))
         throw(InexactError(BigFixedPoint, typeof(v), v))
-    end    
+    end
     BigFixedPoint{BigInt,P}(BigInt(trunc(round(v; digits=p) * (10^p))), Int(p))
 end
 
-function string(z::BigFixedPoint; base::Integer = 10, pad::Integer = 1)
+function string(z::BigFixedPoint; base::Integer=10, pad::Integer=1)
     if base ≠ 10
         prinln("Warning: Bases other than 10 not yet implemented")
-    end;
+    end
     if pad ≠ 1
         println("Warning: Pad not yet implemented")
     end
     s = string(abs(z.value))
     if z.value == 0
-        fmt = "0." * repeat("0",z.precision)
+        fmt = "0." * repeat("0", z.precision)
     elseif length((s)) <= z.precision
         fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     else
         fmt = (z.value < 0 ? "-" : "") * s[1:end-z.precision] * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     end
     return fmt
-end    
+end
 
 function show(io::IO, z::BigFixedPoint)
     fmt = string(z)
@@ -93,9 +93,9 @@ end
 
 function sign(z::BigFixedPoint)
     if z.value == 0
-        return BigFixedPoint(BigInt(0),z.precision)
+        return BigFixedPoint(BigInt(0), z.precision)
     else
-        return z.value < 0 ? BigFixedPoint(BigInt(-1) * BigInt(10)^BigInt(z.precision),z.precision) : BigFixedPoint(BigInt(1) * BigInt(10)^BigInt(z.precision),z.precision)
+        return z.value < 0 ? BigFixedPoint(BigInt(-1) * BigInt(10)^BigInt(z.precision), z.precision) : BigFixedPoint(BigInt(1) * BigInt(10)^BigInt(z.precision), z.precision)
     end
 end
 
@@ -136,7 +136,7 @@ function scale(z::BigFixedPoint, w::BigFixedPoint)
         return (x, w)
     end
 end
-   
+
 function scale!(z::BigFixedPoint, w::BigFixedPoint)
     if z.precision > w.precision
         w.value = BigInt(trunc((Int(w.value) * 10^(z.precision - w.precision))))
@@ -199,7 +199,7 @@ function floatdiv(z::BigFixedPoint, w::BigFixedPoint)
             return BigFixedPoint((r ÷ 10) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
         end
     else
-        return BigFixedPoint(x.value ÷ y.value,x.precision)
+        return BigFixedPoint(x.value ÷ y.value, x.precision)
     end
 end
 
@@ -258,18 +258,18 @@ end
 
 function tryparse_internal(::Type{BigFixedPoint}, s::String)
     z = parse(BigFloat, s)
-    n = BigFixedPoint(BigInt(0),2)
-    if !isnothing(findfirst('e',s))
-        if findfirst('e',string(z))
+    n = BigFixedPoint(BigInt(0), 2)
+    if !isnothing(findfirst('e', s))
+        if findfirst('e', string(z))
             throw(InexactError(:parse, BigFixedPoint, s))
         end
     else
-        decloc = findfirst('.',string(z))
+        decloc = findfirst('.', string(z))
         if isnothing(decloc)
-           throw(ArgumentError("Cannot process $(s) a BigFixedPoint type"))
+            throw(ArgumentError("Cannot process $(s) a BigFixedPoint type"))
         else
             n.precision = length(s[decloc+1:end])
-            n.value = BigInt(trunc(z*(10^n.precision)))
+            n.value = BigInt(trunc(z * (10^n.precision)))
         end
     end
     return n
@@ -292,27 +292,27 @@ println(x * 2)
 parse(::Type{BigFixedPoint}, s::AbstractString; kwargs...) = tryparse_internal(BigFixedPoint, s)
 
 function cmp(z::BigFixedPoint, w::BigFixedPoint)::Integer
-    (x,y) = scale(z,w)
+    (x, y) = scale(z, w)
     return isless(x.value, y.value)
 end
 
 function cmp(z::Integer, w::BigFixedPoint)::Integer
-    (x,y) = scale(BigFixedPoint(z,0),w)
+    (x, y) = scale(BigFixedPoint(z, 0), w)
     return isless(x.value, y.value)
 end
 
 function cmp(z::BigFixedPoint, w::Integer)::Integer
-    (x,y) = scale(w,BigFixedPoint(w,0))
+    (x, y) = scale(z, BigFixedPoint(w, 0))
     return isless(x.value, y.value)
 end
 
 function cmp(z::AbstractFloat, w::BigFixedPoint)::Integer
-    (x,y) = scale(parse(BigFixedPoint, string(z)),w)
+    (x, y) = scale(parse(BigFixedPoint, string(z)), w)
     return isless(x.value, y.value)
 end
 
 function cmp(z::BigFixedPoint, w::AbstractFloat)::Integer
-    (x,y) = scale(z, parse(BigFixedPoint, string(w)))
+    (x, y) = scale(z, parse(BigFixedPoint, string(w)))
     return isless(x.value, y.value)
 end
 
@@ -336,87 +336,87 @@ function modf(z::BigFixedPoint)
 end
 
 (==)(z::BigFixedPoint, w::BigFixedPoint) = eq(z, w)
-(==)(z::Integer, w::BigFixedPoint) = eq(BigFixedPoint(z,0), w)
-(==)(z::BigFixedPoint, w::Integer) = eq(z, BigFixedPoint(w,0))
+(==)(z::Integer, w::BigFixedPoint) = eq(BigFixedPoint(z, 0), w)
+(==)(z::BigFixedPoint, w::Integer) = eq(z, BigFixedPoint(w, 0))
 (==)(z::AbstractFloat, w::BigFixedPoint) = (z == BigFloat(w))
 (==)(z::BigFixedPoint, w::AbstractFloat) = (BigFloat(z) == w)
 
 (>=)(z::BigFixedPoint, w::BigFixedPoint) = gteq(z, w)
-(>=)(z::Integer, w::BigFixedPoint) = gteq(BigFixedPoint(z,0), w)
-(>=)(z::BigFixedPoint, w::Integer) = gteq(z, BigFixedPoint(w,0))
+(>=)(z::Integer, w::BigFixedPoint) = gteq(BigFixedPoint(z, 0), w)
+(>=)(z::BigFixedPoint, w::Integer) = gteq(z, BigFixedPoint(w, 0))
 (>=)(z::AbstractFloat, w::BigFixedPoint) = (BigFloat(z) >= w)
-(>=)(z::BigFixedPoint, w::AbstractFloat) = (z >- BigFloat(w))
+(>=)(z::BigFixedPoint, w::AbstractFloat) = (z > -BigFloat(w))
 
 (<=)(z::BigFixedPoint, w::BigFixedPoint) = lteq(z, w)
-(<=)(z::Integer, w::BigFixedPoint) = lteq(BigFixedPoint(z,0), w)
-(<=)(z::BigFixedPoint, w::Integer) = lteq(z, BigFixedPoint(w,0))
+(<=)(z::Integer, w::BigFixedPoint) = lteq(BigFixedPoint(z, 0), w)
+(<=)(z::BigFixedPoint, w::Integer) = lteq(z, BigFixedPoint(w, 0))
 (<=)(z::AbstractFloat, w::BigFixedPoint) = (z <= BigFloat(w))
 (<=)(z::BigFixedPoint, w::AbstractFloat) = (BigFloat(z) <= w)
 
 (<)(z::BigFixedPoint, w::BigFixedPoint) = lt(z, w)
-(<)(z::Integer, w::BigFixedPoint) = lt(BigFixedPoint(z,0), w)
-(<)(z::BigFixedPoint, w::Integer) = lt(z, BigFixedPoint(w,0))
+(<)(z::Integer, w::BigFixedPoint) = lt(BigFixedPoint(z, 0), w)
+(<)(z::BigFixedPoint, w::Integer) = lt(z, BigFixedPoint(w, 0))
 (<)(z::AbstractFloat, w::BigFixedPoint) = (z < BigFloat(w))
 (<)(z::BigFixedPoint, w::AbstractFloat) = (BigFloat(z) < w)
 
 (>)(z::BigFixedPoint, w::BigFixedPoint) = gt(z, w)
-(>)(z::Integer, w::BigFixedPoint) = gt(BigFixedPoint(z,0), w)
-(>)(z::BigFixedPoint, w::Integer) = gt(z, BigFixedPoint(w,0))
+(>)(z::Integer, w::BigFixedPoint) = gt(BigFixedPoint(z, 0), w)
+(>)(z::BigFixedPoint, w::Integer) = gt(z, BigFixedPoint(w, 0))
 (>)(z::AbstractFloat, w::BigFixedPoint) = (z > BigFloat(w))
 (>)(z::BigFixedPoint, w::AbstractFloat) = (BigFloat(z) > w)
 
 (+)(z::BigFixedPoint, w::BigFixedPoint) = add(z, w)
-(+)(z::Integer, w::BigFixedPoint) = add(BigFixedPoint(z,0), w)
-(+)(z::BigFixedPoint, w::Integer) = add(z, BigFixedPoint(w,0))
+(+)(z::Integer, w::BigFixedPoint) = add(BigFixedPoint(z, 0), w)
+(+)(z::BigFixedPoint, w::Integer) = add(z, BigFixedPoint(w, 0))
 (+)(z::AbstractFloat, w::BigFixedPoint) = add(parse(BigFixedPoint, string(z)), w)
 (+)(z::BigFixedPoint, w::AbstractFloat) = add(z, parse(BigFixedPoint, string(w)))
 
 (-)(z::BigFixedPoint, w::BigFixedPoint) = sub(z, w)
-(-)(z::Integer, w::BigFixedPoint) = sub(BigFixedPoint(z,0), w)
-(-)(z::BigFixedPoint, w::Integer) = sub(z, BigFixedPoint(w,0))
+(-)(z::Integer, w::BigFixedPoint) = sub(BigFixedPoint(z, 0), w)
+(-)(z::BigFixedPoint, w::Integer) = sub(z, BigFixedPoint(w, 0))
 (-)(z::AbstractFloat, w::BigFixedPoint) = sub(parse(BigFixedPoint, string(z)), w)
 (-)(z::BigFixedPoint, w::AbstractFloat) = sub(z, parse(BigFixedPoint, string(w)))
 
 (*)(z::BigFixedPoint, w::BigFixedPoint) = mul(z, w)
-(*)(z::Integer, w::BigFixedPoint) = mul(BigFixedPoint(z,0), w)
-(*)(z::BigFixedPoint, w::Integer) = mul(z, BigFixedPoint(w,0))
+(*)(z::Integer, w::BigFixedPoint) = mul(BigFixedPoint(z, 0), w)
+(*)(z::BigFixedPoint, w::Integer) = mul(z, BigFixedPoint(w, 0))
 (*)(z::AbstractFloat, w::BigFixedPoint) = mul(parse(BigFixedPoint, string(z)), w)
 (*)(z::BigFixedPoint, w::AbstractFloat) = mul(z, parse(BigFixedPoint, string(w)))
 
 (/)(z::BigFixedPoint, w::BigFixedPoint) = floatdiv(z, w)
-(/)(z::Integer, w::BigFixedPoint) = floatdiv(BigFixedPoint(z,0), w)
-(/)(z::BigFixedPoint, w::Integer) = floatdiv(z, BigFixedPoint(w,0))
+(/)(z::Integer, w::BigFixedPoint) = floatdiv(BigFixedPoint(z, 0), w)
+(/)(z::BigFixedPoint, w::Integer) = floatdiv(z, BigFixedPoint(w, 0))
 (/)(z::AbstractFloat, w::BigFixedPoint) = floatdiv(parse(BigFixedPoint, string(z)), w)
 (/)(z::BigFixedPoint, w::AbstractFloat) = floatdiv(z, parse(BigFixedPoint, string(w)))
 
 (\)(z::BigFixedPoint, w::BigFixedPoint) = invdiv(z, w)
-(\)(z::Integer, w::BigFixedPoint) = invdiv(BigFixedPoint(z,0), w)
-(\)(z::BigFixedPoint, w::Integer) = invdiv(z, BigFixedPoint(w,0))
+(\)(z::Integer, w::BigFixedPoint) = invdiv(BigFixedPoint(z, 0), w)
+(\)(z::BigFixedPoint, w::Integer) = invdiv(z, BigFixedPoint(w, 0))
 (\)(z::AbstractFloat, w::BigFixedPoint) = invdiv(parse(BigFixedPoint, string(z)), w)
 (\)(z::BigFixedPoint, w::AbstractFloat) = invdiv(z, parse(BigFixedPoint, string(w)))
 
 (^)(z::BigFixedPoint, w::BigFixedPoint) = pwr(z, w)
-(^)(z::Integer, w::BigFixedPoint) = pwr(BigFixedPoint(z,0), w)
-(^)(z::BigFixedPoint, w::Integer) = pwr(z, BigFixedPoint(w,0))
+(^)(z::Integer, w::BigFixedPoint) = pwr(BigFixedPoint(z, 0), w)
+(^)(z::BigFixedPoint, w::Integer) = pwr(z, BigFixedPoint(w, 0))
 (^)(z::AbstractFloat, w::BigFixedPoint) = pwr(parse(BigFixedPoint, string(z)), w)
 (^)(z::BigFixedPoint, w::AbstractFloat) = pwr(z, parse(BigFixedPoint, string(w)))
 
 (÷)(z::BigFixedPoint, w::BigFixedPoint) = intdiv(z, w)
-(÷)(z::Integer, w::BigFixedPoint) = intdiv(BigFixedPoint(z,0), w)
-(÷)(z::BigFixedPoint, w::Integer) = intdiv(z, BigFixedPoint(w,0))
+(÷)(z::Integer, w::BigFixedPoint) = intdiv(BigFixedPoint(z, 0), w)
+(÷)(z::BigFixedPoint, w::Integer) = intdiv(z, BigFixedPoint(w, 0))
 (÷)(z::AbstractFloat, w::BigFixedPoint) = intdiv(parse(BigFixedPoint, string(z)), w)
 (÷)(z::BigFixedPoint, w::AbstractFloat) = intdiv(z, parse(BigFixedPoint, string(w)))
 
 (%)(z::BigFixedPoint, w::BigFixedPoint) = rem(z, w)
-(%)(z::Integer, w::BigFixedPoint) = rem(BigFixedPoint(z,0), w)
-(%)(z::BigFixedPoint, w::Integer) = rem(z, BigFixedPoint(w,0))
+(%)(z::Integer, w::BigFixedPoint) = rem(BigFixedPoint(z, 0), w)
+(%)(z::BigFixedPoint, w::Integer) = rem(z, BigFixedPoint(w, 0))
 (%)(z::AbstractFloat, w::BigFixedPoint) = rem(parse(BigFixedPoint, string(z)), w)
 (%)(z::BigFixedPoint, w::AbstractFloat) = rem(z, parse(BigFixedPoint, string(w)))
 
-(log)(z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(z)),z.precision))
-(log)(b::BigFixedPoint,z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(b),BigFloat(z)),maxprecision(b,z)))
-(log)(b::Number,z::BigFixedPoint) = (BigFixedPoint(log(b, BigFloat(z)), z.precision))
-(log)(b::BigFixedPoint,z::Number) = (BigFixedPoint(log(BigFloat(b), z), z.precision))
+(log)(z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(z)), z.precision))
+(log)(b::BigFixedPoint, z::BigFixedPoint) = (BigFixedPoint(log(BigFloat(b), BigFloat(z)), maxprecision(b, z)))
+(log)(b::Number, z::BigFixedPoint) = (BigFixedPoint(log(b, BigFloat(z)), z.precision))
+(log)(b::BigFixedPoint, z::Number) = (BigFixedPoint(log(BigFloat(b), z), z.precision))
 (log10)(z::BigFixedPoint) = (BigFixedPoint(log10(BigFloat(z)), z.precision))
 (log2)(z::BigFixedPoint) = (BigFixedPoint(log2(BigFloat(z)), z.precision))
 (log1p)(z::BigFixedPoint) = (BigFixedPoint(log1p(BigFloat(z)), z.precision))
@@ -448,9 +448,9 @@ end
 (sincospi)(z::BigFixedPoint) = (BigFixedPoint(sincospi(BigFloat(z)), z.precision))
 
 (atan)(z::BigFixedPoint) = (BigFixedPoint(atan(BigFloat(z)), z.precision))
-(atan)(z::BigFixedPoint,w::BigFixedPoint) = (BigFixedPoint(atan(BigFloat(z),BigFloat(w)), maxprecision(z,w)))
-(atan)(z::BigFixedPoint,w::Number) = (BigFixedPoint(atan(BigFloat(z),w), z.precision))
-(atan)(z::Number,w::BigFixedPoint) = (BigFixedPoint(atan(z,BigFloat(w)), x.precision))
+(atan)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(atan(BigFloat(z), BigFloat(w)), maxprecision(z, w)))
+(atan)(z::BigFixedPoint, w::Number) = (BigFixedPoint(atan(BigFloat(z), w), z.precision))
+(atan)(z::Number, w::BigFixedPoint) = (BigFixedPoint(atan(z, BigFloat(w)), x.precision))
 (atand)(z::BigFixedPoint) = (BigFixedPoint(atand(BigFloat(z)), z.precision))
 (atanh)(z::BigFixedPoint) = (BigFixedPoint(atanh(BigFloat(z)), z.precision))
 
@@ -489,19 +489,19 @@ end
 (deg2rad)(z::BigFixedPoint) = (BigFixedPoint(deg2rad(BigFloat(z)), z.precision))
 (rad2deg)(z::BigFixedPoint) = (BigFixedPoint(rad2deg(BigFloat(z)), z.precision))
 
-(hypot)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(hypot(BigFloat(z),BigFloat(w)), maxprecision(z,w)))
-(hypot)(z::BigFixedPoint, w::Number) = (BigFixedPoint(hypot(BigFloat(z),w), z.precision))
-(hypot)(z::Number, w::BigFixedPoint) = (BigFixedPoint(hypot(z,BigFloat(w)), w.precision))
+(hypot)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(hypot(BigFloat(z), BigFloat(w)), maxprecision(z, w)))
+(hypot)(z::BigFixedPoint, w::Number) = (BigFixedPoint(hypot(BigFloat(z), w), z.precision))
+(hypot)(z::Number, w::BigFixedPoint) = (BigFixedPoint(hypot(z, BigFloat(w)), w.precision))
 
 (frexp)(z::BigFixedPoint) = (BigFixedPoint(frexp(BigFloat(z)), z.precision))
 
-(ldexp)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(ldexp(BigFloat(z),BigFloat(w)), maxprecision(z,w)))
+(ldexp)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(ldexp(BigFloat(z), BigFloat(w)), maxprecision(z, w)))
 
 (-)(z::BigFixedPoint) = (BigFixedPoint(-(z.value), z.precision))
 (+)(z::BigFixedPoint) = (BigFixedPoint(+(z.value), z.precision))
 
 (ispow2)(z::BigFixedPoint) = (BigFixedPoint(ispow2(BigFloat(z)), z.precision))
 
-(prevpow)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(prevpow(BigFloat(z),BigFloat(w)), maxprecision(z,w)))
-(prevpow)(z::BigFixedPoint, w::Number) = (BigFixedPoint(prevpow(BigFloat(z),w), z.precision))
-(prevpow)(z::Number, w::BigFixedPoint) = (BigFixedPoint(prevpow(z,BigFloat(w)), w.precision))
+(prevpow)(z::BigFixedPoint, w::BigFixedPoint) = (BigFixedPoint(prevpow(BigFloat(z), BigFloat(w)), maxprecision(z, w)))
+(prevpow)(z::BigFixedPoint, w::Number) = (BigFixedPoint(prevpow(BigFloat(z), w), z.precision))
+(prevpow)(z::Number, w::BigFixedPoint) = (BigFixedPoint(prevpow(z, BigFloat(w)), w.precision))
