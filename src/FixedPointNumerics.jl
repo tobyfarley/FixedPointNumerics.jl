@@ -51,8 +51,8 @@ function eq(z::FixedPoint, w::BigFixedPoint)
     return eq(x, y)
 end
 
-function neq(z::FixedPoint, w::BigFixedPoint)
-    (x, y) = scale(BigFixedPoint(z), w)
+function neq(z::BigFixedPoint, w::FixedPoint)
+    (x, y) = scale(z, BigFixedPoint(w))
     return neq(x, y)
 end
 
