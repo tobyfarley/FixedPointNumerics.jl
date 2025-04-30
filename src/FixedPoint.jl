@@ -52,7 +52,7 @@ FixedPoint(v::V, p::P) where {V<:Int128,P<:Integer} = FixedPoint{V,P}(v, p)
 
 function FixedPoint(v::V) where {V<:AbstractString}
     decloc = findfirst('.', v)
-    v = Integer(replace(v, "." => ""))
+    v = parse(Integer, replace(v, "." => ""))
     p = length(v) - decloc
     return FixedPoint(v, p)
 end
