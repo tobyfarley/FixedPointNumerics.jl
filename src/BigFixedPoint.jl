@@ -68,7 +68,8 @@ end
 function BigFixedPoint(v::V) where {V<:AbstractFloat}
     x = string(v)
     println(x)
-    return tryparse_internal(FixedPoint,x) 
+    temp = tryparse_internal(FixedPoint,x) 
+    println(temp, temp.value, temp.precision)
 end
 
 function BigFixedPoint(v::Int64, p::Int64)
