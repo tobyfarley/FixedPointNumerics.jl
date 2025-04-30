@@ -349,8 +349,8 @@ end
 (==)(z::BigFixedPoint, w::BigFixedPoint) = eq(z, w)
 (==)(z::Integer, w::BigFixedPoint) = eq(BigFixedPoint(z, 0), w)
 (==)(z::BigFixedPoint, w::Integer) = eq(z, BigFixedPoint(w, 0))
-(==)(z::AbstractFloat, w::BigFixedPoint) = (BigFixedPoint(z) == w)
-(==)(z::BigFixedPoint, w::AbstractFloat) = (z == BigFixedPoint(w))
+(==)(z::AbstractFloat, w::BigFixedPoint) = eq(BigFixedPoint(z), w)
+(==)(z::BigFixedPoint, w::AbstractFloat) = eq(z, BigFixedPoint(w))
 
 (>=)(z::BigFixedPoint, w::BigFixedPoint) = gteq(z, w)
 (>=)(z::Integer, w::BigFixedPoint) = gteq(BigFixedPoint(z, 0), w)
