@@ -104,6 +104,11 @@ using Test
     @test bfp12 - 22.2 == 19.3
     @test 41.5 - bfp13 == 19.3
 
+    @test bfp4 * bfp6 == 10.03
+    @test 10.03 == bfp4 * bfp6
+    @test bfp4 * 10.24 == 10.03
+    @test 10.24 * bfp4 == 10.03
+
     @test bfp2 > bfp1
     @test bfp1 < bfp2
     @test bfp2 >= bfp1

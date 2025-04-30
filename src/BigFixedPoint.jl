@@ -67,7 +67,7 @@ end
 
 function BigFixedPoint(v::V) where {V<:AbstractFloat}
     x = string(v)
-    return tryparse_internal(BigFixedPoint,x) 
+    return tryparse_internal(BigFixedPoint, x)
 end
 
 function BigFixedPoint(v::Int64, p::Int64)
@@ -331,7 +331,7 @@ function AbstractFloat(z::BigFixedPoint)
 end
 
 function BigFloat(z::BigFixedPoint)
-    return round(z.value / (10^z.precision); digits = z.precision)
+    return round(z.value / (10^z.precision); digits=z.precision)
 end
 
 function maxprecision(z::BigFixedPoint, w::BigFixedPoint)
@@ -360,20 +360,20 @@ end
 (<=)(z::BigFixedPoint, w::BigFixedPoint) = lteq(z, w)
 (<=)(z::Integer, w::BigFixedPoint) = lteq(BigFixedPoint(z, 0), w)
 (<=)(z::BigFixedPoint, w::Integer) = lteq(z, BigFixedPoint(w, 0))
-(<=)(z::AbstractFloat, w::BigFixedPoint) = (BigFixedPoint(z) <= w)
-(<=)(z::BigFixedPoint, w::AbstractFloat) = (z <= BigFixedPoint(w))
+(<=)(z::AbstractFloat, w::BigFixedPoint) = lteq(BigFixedPoint(z), w)
+(<=)(z::BigFixedPoint, w::AbstractFloat) = lteq(z, BigFixedPoint(w))
 
 (<)(z::BigFixedPoint, w::BigFixedPoint) = lt(z, w)
 (<)(z::Integer, w::BigFixedPoint) = lt(BigFixedPoint(z, 0), w)
 (<)(z::BigFixedPoint, w::Integer) = lt(z, BigFixedPoint(w, 0))
-(<)(z::AbstractFloat, w::BigFixedPoint) = (BigFixedPoint(z) < w)
-(<)(z::BigFixedPoint, w::AbstractFloat) = (z < BigFixedPoint(w))
+(<)(z::AbstractFloat, w::BigFixedPoint) = lt(BigFixedPoint(z), w)
+(<)(z::BigFixedPoint, w::AbstractFloat) = lt(z, BigFixedPoint(w))
 
 (>)(z::BigFixedPoint, w::BigFixedPoint) = gt(z, w)
 (>)(z::Integer, w::BigFixedPoint) = gt(BigFixedPoint(z, 0), w)
 (>)(z::BigFixedPoint, w::Integer) = gt(z, BigFixedPoint(w, 0))
-(>)(z::AbstractFloat, w::BigFixedPoint) = (BigFixedPoint(z) > (w))
-(>)(z::BigFixedPoint, w::AbstractFloat) = (z > BigFixedPoint(w))
+(>)(z::AbstractFloat, w::BigFixedPoint) = gt(BigFixedPoint(z), (w))
+(>)(z::BigFixedPoint, w::AbstractFloat) = gt(z, BigFixedPoint(w))
 
 (+)(z::BigFixedPoint, w::BigFixedPoint) = add(z, w)
 (+)(z::Integer, w::BigFixedPoint) = add(BigFixedPoint(z, 0), w)
@@ -391,7 +391,7 @@ end
 (*)(z::Integer, w::BigFixedPoint) = mul(BigFixedPoint(z, 0), w)
 (*)(z::BigFixedPoint, w::Integer) = mul(z, BigFixedPoint(w, 0))
 (*)(z::AbstractFloat, w::BigFixedPoint) = mul(BigFixedPoint(z), w)
-(*)(z::BigFixedPoint, w::AbstractFloat) = mul(z, BigFixedPoint(z))
+(*)(z::BigFixedPoint, w::AbstractFloat) = mul(z, BigFixedPoint(w))
 
 (/)(z::BigFixedPoint, w::BigFixedPoint) = floatdiv(z, w)
 (/)(z::Integer, w::BigFixedPoint) = floatdiv(BigFixedPoint(z, 0), w)
