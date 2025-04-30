@@ -262,7 +262,7 @@ function tryparse_internal(::Type{FixedPoint}, s::String)
     else
         decloc = findfirst('.', string(z))
         if isnothing(decloc)
-            throw(ArgumentError("Cannot process $(s) a FixedPoint type"))
+            throw(ArgumentError("Cannot process $(s) as a FixedPoint type"))
         else
             n.precision = length(s[decloc+1:end])
             n.value = Int(trunc(z * (10^n.precision)))
