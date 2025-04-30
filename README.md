@@ -15,6 +15,8 @@ Basically
 
     There is a BigFixedPoint with a similar interface
 
+    Strings can be used in equations where float constants might create inaccuracies due to the nature of floats. 
+
 Basic math operations and some higher math functionality availiable. Every equation will widen a fixed point number to the 
 largest precision of any fixed point number in the equation. For example, multiplying a number of two decimal places by one of four places
 will produce a four place number regardless of the result. A conversion to float and back to fixed point is done when calling
