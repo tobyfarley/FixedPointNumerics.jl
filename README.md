@@ -24,4 +24,4 @@ higher math functions. With single parameter math functions (ie. sin, cos and ta
 
 There are no breaking changes from pre 1.0 versions.
 
-Version 1.0.0
+Version 1.0.1
