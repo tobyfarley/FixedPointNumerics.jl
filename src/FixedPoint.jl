@@ -8,7 +8,7 @@ import Base.csc, Base.cscd, Base.csch, Base.cot, Base.cotd, Base.coth, Base.asec
 import Base.acsc, Base.acscd, Base.acsch, Base.acot, Base.acotd, Base.acoth, Base.asin, Base.asind, Base.asinh
 import Base.asin, Base.asind, Base.asinh, Base.acos, Base.acosd, Base.acosh, Base.atan, Base.atand, Base.atanh
 import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldexp, Base.modf, Base.trunc
-import Base.ispow2, Base.invmod
+import Base.ispow2, Base.invmod, Base.signbit
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
 
 # testing
@@ -227,6 +227,62 @@ end
 function invmod(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
     return FixedPoint((y.value % x.value), x.precision)
+end
+
+function signbit(z::FixedPoint)
+    return signbit(z.value) 
+end
+
+function round(z::FixedPoint, ::RoundingMode{:NearestTiesAway})
+    nv = FixedPoint(0,0)
+    nv.value = z.value
+    nv.precision = z.precision
+    rem = (nv.value % (10^(nv.precision)))
+    if abs(rem) >= 5 
+        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value))  * (10^(z.precision) ) 
+    else
+        nv.value = (z.value ÷ (10^(z.precision)))  * (10^(z.precision) ) 
+    end 
+    return nv  
+end
+
+function round(z::FixedPoint, ::RoundingMode{:NearestTiesUp})
+    nv = FixedPoint(0,0)
+    nv.value = z.value
+    nv.precision = z.precision
+    rem = (nv.value % (10^(nv.precision)))
+    if abs(rem) >= 5 
+        nv.value = ((z.value ÷ (10^(z.precision))) + 1)  * (10^(z.precision) )
+    else
+        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision) )
+    end 
+    return nv  
+end
+
+function round(z::FixedPoint, ::RoundingMode{:FromZero})
+    nv = FixedPoint(0,0)
+    nv.value = z.value
+    nv.precision = z.precision
+    rem = (nv.value % (10^(nv.precision)))
+    if abs(rem) > 0 
+        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value)) * (10^(z.precision) )
+    else
+        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision) )
+    end 
+    return nv  
+end
+
+function round(z::FixedPoint, ::RoundingMode{:ToZero})
+    nv = FixedPoint(0,0)
+    nv.value = z.value
+    nv.precision = z.precision
+    rem = (nv.value % (10^(nv.precision)))
+    if abs(rem) > 0 
+        nv.value = ((z.value ÷ (10^(z.precision))) - copysign(1, z.value))  * (10^(z.precision) )
+    else
+        nv.value = ((z.value ÷ (10^(z.precision)))) * (10^(z.precision) )
+    end 
+    return nv  
 end
 
 function round(z::FixedPoint, r::RoundingMode=RoundNearest;
