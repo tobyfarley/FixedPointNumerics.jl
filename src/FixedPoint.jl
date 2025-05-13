@@ -79,7 +79,9 @@ function string(z::FixedPoint; base::Integer=10, pad::Integer=1)
     s = string(abs(z.value))
     if z.value == 0
         fmt = "0." * repeat("0", z.precision)
-    elseif length((s)) <= z.precision
+    elseif length(s) < z.precision 
+        fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * repeat("0", z.precision - length(s)) *s[1:end]
+    elseif length((s)) == z.precision
         fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     else
         fmt = (z.value < 0 ? "-" : "") * s[1:end-z.precision] * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
@@ -193,12 +195,8 @@ end
 function floatdiv(z::FixedPoint, w::FixedPoint)
     (x, y) = scale(z, w)
     r = ((x.value % y.value) * (10^(x.precision + 1))) ÷ y.value
-    if x.precision > 1
-        if r % 10 >= 5
-            return FixedPoint(((r ÷ 10) + 1) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
-        else
-            return FixedPoint((r ÷ 10) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
-        end
+    if x.precision > 0
+        return FixedPoint((r ÷ 10) + ((x.value ÷ y.value) * 10^(x.precision)), x.precision)
     else
         return FixedPoint(x.value ÷ y.value, x.precision)
     end

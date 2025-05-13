@@ -92,7 +92,9 @@ function string(z::BigFixedPoint; base::Integer=10, pad::Integer=1)
     s = string(abs(z.value))
     if z.value == 0
         fmt = "0." * repeat("0", z.precision)
-    elseif length((s)) <= z.precision
+    elseif length(s) < z.precision 
+        fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * repeat("0", z.precision - length(s)) *s[1:end]
+    elseif length((s)) == z.precision
         fmt = (z.value < 0 ? "-" : "") * "0" * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
     else
         fmt = (z.value < 0 ? "-" : "") * s[1:end-z.precision] * (z.precision > 0 ? "." : "") * s[end-z.precision+1:end]
