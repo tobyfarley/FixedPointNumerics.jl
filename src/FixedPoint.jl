@@ -230,87 +230,112 @@ function invmod(z::FixedPoint, w::FixedPoint)
 end
 
 function signbit(z::FixedPoint)
-    return signbit(z.value) 
+    return signbit(z.value)
 end
 
 function round(z::FixedPoint, ::RoundingMode{:NearestTiesAway})
-    nv = FixedPoint(0,0)
-    nv.value = z.value
-    nv.precision = z.precision
+    nv = FixedPoint(z.value, z.precision)
     rem = (nv.value % (10^(nv.precision)))
-    if abs(rem) >= 5 
-        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value))  * (10^(z.precision) ) 
+    if abs(rem) >= 5
+        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value)) * (10^(z.precision))
     else
-        nv.value = (z.value ÷ (10^(z.precision)))  * (10^(z.precision) ) 
-    end 
-    return nv  
+        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision))
+    end
+    return nv
 end
 
 function round(z::FixedPoint, ::RoundingMode{:NearestTiesUp})
-    nv = FixedPoint(0,0)
-    nv.value = z.value
-    nv.precision = z.precision
+    nv = FixedPoint(z.value, z.precision)
     rem = (nv.value % (10^(nv.precision)))
-    if abs(rem) >= 5 
-        nv.value = ((z.value ÷ (10^(z.precision))) + 1)  * (10^(z.precision) )
+    if abs(rem) >= 5
+        nv.value = ((z.value ÷ (10^(z.precision))) + 1) * (10^(z.precision))
     else
-        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision) )
-    end 
-    return nv  
+        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision))
+    end
+    return nv
 end
 
 function round(z::FixedPoint, ::RoundingMode{:FromZero})
-    nv = FixedPoint(0,0)
-    nv.value = z.value
-    nv.precision = z.precision
+    nv = FixedPoint(z.value, z.precision)
     rem = (nv.value % (10^(nv.precision)))
-    if abs(rem) > 0 
-        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value)) * (10^(z.precision) )
+    if abs(rem) > 0
+        nv.value = ((z.value ÷ (10^(z.precision))) + copysign(1, z.value)) * (10^(z.precision))
     else
-        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision) )
-    end 
-    return nv  
+        nv.value = (z.value ÷ (10^(z.precision))) * (10^(z.precision))
+    end
+    return nv
 end
 
 function round(z::FixedPoint, ::RoundingMode{:ToZero})
-    nv = FixedPoint(0,0)
-    nv.value = z.value
-    nv.precision = z.precision
+    nv = FixedPoint(z.value, z.precision)
     rem = (nv.value % (10^(nv.precision)))
-    if abs(rem) > 0 
-        nv.value = ((z.value ÷ (10^(z.precision))) - copysign(1, z.value))  * (10^(z.precision) )
+    if abs(rem) > 0
+        nv.value = ((z.value ÷ (10^(z.precision))) - copysign(1, z.value)) * (10^(z.precision))
     else
-        nv.value = ((z.value ÷ (10^(z.precision)))) * (10^(z.precision) )
-    end 
-    return nv  
+        nv.value = ((z.value ÷ (10^(z.precision)))) * (10^(z.precision))
+    end
+    return nv
+end
+
+function round(z::FixedPoint, ::RoundingMode{:Up})
+    nv = FixedPoint(z.value, z.precision)
+    nv.value = ((z.value ÷ (10^(z.precision))) + 1) * (10^(z.precision))
+    return nv
+end
+
+function round(z::FixedPoint, ::RoundingMode{:Down})
+    nv = FixedPoint(z.value, z.precision)
+    nv.value = ((z.value ÷ (10^(z.precision))) - 1) * (10^(z.precision))
+    return nv
 end
 
 function round(z::FixedPoint, r::RoundingMode=RoundNearest;
     digits::Union{Nothing,Integer}=nothing, sigdigits::Union{Nothing,Integer}=nothing, base::Union{Nothing,Integer}=nothing)
-    nv = FixedPoint(z.value, z.precision)
-    if sigdigits ≠ nothing
-        println("Warning: sigdigits no implemented yet")
-        return nv
-    end
-    if base ≠ nothing
-        println("Warning: bases other than 10 are not implemented yet")
-        return nv
-    end
-    if isnothing(digits)
-        digits = 0
-    end
-    if nv.precision - digits > 0
-        rem = (nv.value % (10^(nv.precision - digits))) ÷ 10^(nv.precision - digits - 1)
-        if rem >= 5 && r != RoundToZero
-            nv.value = (nv.value ÷ (10^(nv.precision - digits))) + 1
+    if digits === nothing
+        if sigdigits === nothing
+            if base === nothing
+                # avoid recursive calls
+                if r == RoundNearest
+                    return round(z, RoundNearestTiesUp)
+                else
+                    return round(z, r)
+                end
+                #throw(MethodError(round, (z, r)))
+            else
+                if r == RoundNearest
+                    return round(z, RoundNearestTiesUp)
+                else
+                    return round(z, r)
+                end
+            end
         else
-            nv.value = (nv.value ÷ (10^(nv.precision - digits)))
+            nv = FixedPoint(z.value, z.precision)
+            nv.value = round(nv.value, r; sigdigits=sigdigits)
+            return nv
         end
     else
-        nv.value = (nv.value * (10^(digits - nv.precision)))
+        if sigdigits === nothing
+            nv = FixedPoint(z.value, 0)
+            d = z.precision - digits
+            if  d > 0
+                for p in 1:d
+                    nv.precision = p
+                    if r == RoundNearest
+                        nv = round(nv, RoundNearestTiesUp)
+                    else
+                        nv = round(nv, r)
+                    end                    
+                end
+                nv.precision = z.precision
+                return nv 
+            else
+                nv.precision = z.precision
+                return nv
+            end
+        else
+            throw(ArgumentError("`round` cannot use both `digits` and `sigdigits` arguments."))
+        end
     end
-    nv.precision = digits
-    return nv
 end
 
 function tryparse_internal(::Type{FixedPoint}, s::String)
