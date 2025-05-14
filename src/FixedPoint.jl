@@ -8,8 +8,9 @@ import Base.csc, Base.cscd, Base.csch, Base.cot, Base.cotd, Base.coth, Base.asec
 import Base.acsc, Base.acscd, Base.acsch, Base.acot, Base.acotd, Base.acoth, Base.asin, Base.asind, Base.asinh
 import Base.asin, Base.asind, Base.asinh, Base.acos, Base.acosd, Base.acosh, Base.atan, Base.atand, Base.atanh
 import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldexp, Base.modf, Base.trunc
-import Base.ispow2, Base.invmod, Base.signbit
+import Base.ispow2, Base.invmod, Base.signbit, Base.rem2pi
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
+import Base: promote_rule
 
 # testing
 
@@ -49,6 +50,11 @@ end
 FixedPoint(v::V, p::P) where {V<:Int,P<:Integer} = FixedPoint{V,P}(v, p)
 
 FixedPoint(v::V, p::P) where {V<:Int128,P<:Integer} = FixedPoint{V,P}(v, p)
+
+function FixedPoint(v::V) where {V<:AbstractFloat}
+    x = string(v)
+    return tryparse_internal(FixedPoint, x)
+end
 
 function FixedPoint(s::S) where {S<:AbstractString}
     decloc = findfirst('.', s)
@@ -612,3 +618,5 @@ end
 (prevpow)(z::FixedPoint, w::FixedPoint) = (FixedPoint(prevpow(Float64(z), Float64(w)), maxprecision(z, w)))
 (prevpow)(z::FixedPoint, w::Number) = (FixedPoint(prevpow(Float64(z), w), z.precision))
 (prevpow)(z::Number, w::FixedPoint) = (FixedPoint(prevpow(z, Float64(w)), w.precision))
+
+(rem2pi)(z::FixedPoint,r::RoundingMode) = (FixedPoint(rem2pi(Float64(z),r),z.precision))
