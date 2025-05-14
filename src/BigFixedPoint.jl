@@ -24,8 +24,6 @@ export deg2rad, rad2deg, hypot, log1p, ldexp, modf, trunc
 export ispow2, invmod
 export round, parse, sign, copysign
 
-# testing
-
 """
     BigFixedPoint(v,p)
 

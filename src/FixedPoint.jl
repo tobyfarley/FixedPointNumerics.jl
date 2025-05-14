@@ -10,9 +10,6 @@ import Base.asin, Base.asind, Base.asinh, Base.acos, Base.acosd, Base.acosh, Bas
 import Base.deg2rad, Base.rad2deg, Base.hypot, Base.log1p, Base.frexp, Base.ldexp, Base.modf, Base.trunc
 import Base.ispow2, Base.invmod, Base.signbit, Base.rem2pi
 import Base.round, Base.RoundingMode, Base.parse, Base.tryparse, Base.sign, Base.copysign
-import Base: promote_rule
-
-# testing
 
 """
     FixedPoint(v,p)

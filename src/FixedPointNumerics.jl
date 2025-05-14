@@ -12,8 +12,6 @@ export deg2rad, rad2deg, hypot, log1p, ldexp, modf, trunc
 export ispow2, invmod
 export round, parse, sign, copysign, rem2pi
 
-import Base: promote_rule
-
 include("FixedPoint.jl")
 include("BigFixedPoint.jl")
 
