@@ -4,4 +4,4 @@ authors = ["Toby Farley <tobyfarley@gmail.com>"]
 version = "1.0.1"
 
 [compat]
-julia = "^1.9"
+julia = "^1"

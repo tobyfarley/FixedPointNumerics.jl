@@ -22,6 +22,6 @@ largest precision of any fixed point number in the equation. For example, multip
 will produce a four place number regardless of the result. A conversion to float and back to fixed point is done when calling
 higher math functions. With single parameter math functions (ie. sin, cos and tan) the number of decimal places is preserved. 
 
-Breaking Change:  Julia 1.9 or higher.
+No breaking changes from previous versions
 
 Version 1.0.1
